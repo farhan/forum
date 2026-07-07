@@ -28,9 +28,7 @@ User = get_user_model()
 @pytest.mark.django_db
 def test_forum_user_creation() -> None:
     """Test that a ForumUser is created when a User is created."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     forum_user = ForumUser.objects.create(user=user, default_sort_key="date")
     assert forum_user.user == user
     assert forum_user.default_sort_key == "date"
@@ -39,9 +37,7 @@ def test_forum_user_creation() -> None:
 @pytest.mark.django_db
 def test_forum_user_unique_constraint() -> None:
     """Test that a ForumUser is not created when a User already has one."""
-    user1 = User.objects.create(
-        username="testuser1", email="test1@example.com", password="password"
-    )
+    user1 = User.objects.create(username="testuser1", email="test1@example.com", password="password")
     ForumUser.objects.create(user=user1, default_sort_key="date")
     with pytest.raises(IntegrityError):
         ForumUser.objects.create(user=user1, default_sort_key="date")
@@ -50,9 +46,7 @@ def test_forum_user_unique_constraint() -> None:
 @pytest.mark.django_db
 def test_forum_user_default_sort_key_default_value() -> None:
     """Test that the default_sort_key is set to 'date' when not provided."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     forum_user = ForumUser.objects.create(user=user)
     assert forum_user.default_sort_key == "date"
 
@@ -60,9 +54,7 @@ def test_forum_user_default_sort_key_default_value() -> None:
 @pytest.mark.django_db
 def test_course_stat_creation() -> None:
     """Test that a CourseStat is created when a Course is created."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_stat = CourseStat.objects.create(user=user, course_id="course123")
     assert course_stat.user == user
     assert course_stat.course_id == "course123"
@@ -77,9 +69,7 @@ def test_course_stat_creation() -> None:
 @pytest.mark.django_db
 def test_course_stat_unique_constraint() -> None:
     """Test that a CourseStat is not created when a User already has one."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     CourseStat.objects.create(user=user, course_id="course123")
     with pytest.raises(IntegrityError):
         CourseStat.objects.create(user=user, course_id="course123")
@@ -88,9 +78,7 @@ def test_course_stat_unique_constraint() -> None:
 @pytest.mark.django_db
 def test_comment_thread_creation() -> None:
     """Test that a CommentThread is created when a Comment is created."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -112,9 +100,7 @@ def test_comment_thread_creation() -> None:
 @pytest.mark.django_db
 def test_comment_creation() -> None:
     """Test that a Comment is created when a CommentThread is created."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -140,9 +126,7 @@ def test_comment_creation() -> None:
 @pytest.mark.django_db
 def test_comment_thread_update() -> None:
     """Test that a Comment's thread is updated when the thread is updated."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -161,9 +145,7 @@ def test_comment_thread_update() -> None:
 @pytest.mark.django_db
 def test_comment_update() -> None:
     """Test that a Comment's body is updated when the comment is updated."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -186,9 +168,7 @@ def test_comment_update() -> None:
 @pytest.mark.django_db
 def test_forum_user_update() -> None:
     """Test that a ForumUser's data is updated when the user is updated."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     forum_user = ForumUser.objects.create(user=user, default_sort_key="date")
     forum_user.default_sort_key = "votes"
     forum_user.save()
@@ -198,9 +178,7 @@ def test_forum_user_update() -> None:
 @pytest.mark.django_db
 def test_comment_thread_delete() -> None:
     """Test that a CommentThread's data is deleted when the thread is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -216,9 +194,7 @@ def test_comment_thread_delete() -> None:
 @pytest.mark.django_db
 def test_comment_delete() -> None:
     """Test that a Comment's data is deleted when the comment is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -240,9 +216,7 @@ def test_comment_delete() -> None:
 @pytest.mark.django_db
 def test_forum_user_delete() -> None:
     """Test that a ForumUser's data is deleted when the user is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     forum_user = ForumUser.objects.create(user=user, default_sort_key="date")
     forum_user.delete()
     assert ForumUser.objects.filter(id=forum_user.pk).count() == 0
@@ -251,9 +225,7 @@ def test_forum_user_delete() -> None:
 @pytest.mark.django_db
 def test_edit_history_creation() -> None:
     """Test that an EditHistory is created when a Comment is edited."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -277,9 +249,7 @@ def test_edit_history_creation() -> None:
 @pytest.mark.django_db
 def test_edit_history_update() -> None:
     """Test that an EditHistory is updated when a Comment is edited."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -302,9 +272,7 @@ def test_edit_history_update() -> None:
 @pytest.mark.django_db
 def test_edit_history_delete() -> None:
     """Test that an EditHistory is deleted when a Comment is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -326,9 +294,7 @@ def test_edit_history_delete() -> None:
 @pytest.mark.django_db
 def test_abuseflagger_creation() -> None:
     """Test that an AbuseFlagger is created when a Comment is flagged."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -337,9 +303,7 @@ def test_abuseflagger_creation() -> None:
         thread_type="discussion",
         context="course",
     )
-    abuseflagger = AbuseFlagger.objects.create(
-        user=user, content=comment_thread, flagged_at=timezone.now()
-    )
+    abuseflagger = AbuseFlagger.objects.create(user=user, content=comment_thread, flagged_at=timezone.now())
     assert abuseflagger.user == user
     assert abuseflagger.content == comment_thread
     assert abuseflagger.flagged_at is not None
@@ -348,9 +312,7 @@ def test_abuseflagger_creation() -> None:
 @pytest.mark.django_db
 def test_abuseflagger_update() -> None:
     """Test that an AbuseFlagger is updated when a Comment is flagged."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -359,9 +321,7 @@ def test_abuseflagger_update() -> None:
         thread_type="discussion",
         context="course",
     )
-    abuseflagger = AbuseFlagger.objects.create(
-        user=user, content=comment_thread, flagged_at=timezone.now()
-    )
+    abuseflagger = AbuseFlagger.objects.create(user=user, content=comment_thread, flagged_at=timezone.now())
     update_flagged_at = timezone.now() + timedelta(hours=1)
     abuseflagger.flagged_at = update_flagged_at
     abuseflagger.save()
@@ -371,9 +331,7 @@ def test_abuseflagger_update() -> None:
 @pytest.mark.django_db
 def test_abuseflagger_delete() -> None:
     """Test that an AbuseFlagger is deleted when a Comment is unflagged."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -382,9 +340,7 @@ def test_abuseflagger_delete() -> None:
         thread_type="discussion",
         context="course",
     )
-    abuseflagger = AbuseFlagger.objects.create(
-        user=user, content=comment_thread, flagged_at=timezone.now()
-    )
+    abuseflagger = AbuseFlagger.objects.create(user=user, content=comment_thread, flagged_at=timezone.now())
     abuseflagger.delete()
     assert AbuseFlagger.objects.filter(id=abuseflagger.pk).count() == 0
 
@@ -392,9 +348,7 @@ def test_abuseflagger_delete() -> None:
 @pytest.mark.django_db
 def test_historicalabuseflagger_creation() -> None:
     """Test that a HistoricalAbuseFlagger is created when an AbuseFlagger is updated."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -414,9 +368,7 @@ def test_historicalabuseflagger_creation() -> None:
 @pytest.mark.django_db
 def test_historicalabuseflagger_update() -> None:
     """Test that a HistoricalAbuseFlagger is updated when an AbuseFlagger is updated."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -437,9 +389,7 @@ def test_historicalabuseflagger_update() -> None:
 @pytest.mark.django_db
 def test_historicalabuseflagger_delete() -> None:
     """Test that a HistoricalAbuseFlagger is deleted when an AbuseFlagger is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -452,17 +402,13 @@ def test_historicalabuseflagger_delete() -> None:
         user=user, content=comment_thread, flagged_at=timezone.now()
     )
     historicalabuseflagger.delete()
-    assert (
-        HistoricalAbuseFlagger.objects.filter(id=historicalabuseflagger.pk).count() == 0
-    )
+    assert HistoricalAbuseFlagger.objects.filter(id=historicalabuseflagger.pk).count() == 0
 
 
 @pytest.mark.django_db
 def test_readstate_creation() -> None:
     """Test that a ReadState is created when a user reads a comment thread."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     assert read_state.user == user
@@ -472,9 +418,7 @@ def test_readstate_creation() -> None:
 @pytest.mark.django_db
 def test_readstate_update() -> None:
     """Test that a ReadState is updated when a user reads a comment thread."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     new_course_id = "course456"
@@ -486,9 +430,7 @@ def test_readstate_update() -> None:
 @pytest.mark.django_db
 def test_readstate_delete() -> None:
     """Test that a ReadState is deleted when a user is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     read_state.delete()
@@ -498,9 +440,7 @@ def test_readstate_delete() -> None:
 @pytest.mark.django_db
 def test_lastreadtime_creation() -> None:
     """Test that a LastReadTime is created when a user reads a comment thread."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread = CommentThread.objects.create(
@@ -522,9 +462,7 @@ def test_lastreadtime_creation() -> None:
 @pytest.mark.django_db
 def test_lastreadtime_update() -> None:
     """Test that a LastReadTime is updated when a user reads a comment thread."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread = CommentThread.objects.create(
@@ -547,9 +485,7 @@ def test_lastreadtime_update() -> None:
 @pytest.mark.django_db
 def test_lastreadtime_delete() -> None:
     """Test that a LastReadTime is deleted when a user's read state is deleted."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread = CommentThread.objects.create(
@@ -570,9 +506,7 @@ def test_lastreadtime_delete() -> None:
 @pytest.mark.django_db
 def test_lastreadtime_multiple_read_states() -> None:
     """Test that a LastReadTime is created for each read state when a user reads a comment."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id1 = "course123"
     course_id2 = "course456"
     read_state1 = ReadState.objects.create(user=user, course_id=course_id1)
@@ -608,9 +542,7 @@ def test_lastreadtime_multiple_read_states() -> None:
 @pytest.mark.django_db
 def test_lastreadtime_multiple_comment_threads() -> None:
     """Test that a LastReadTime is created for each comment thread when a user reads a comment."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread1 = CommentThread.objects.create(
@@ -644,9 +576,7 @@ def test_lastreadtime_multiple_comment_threads() -> None:
 @pytest.mark.django_db
 def test_readstate_multiple_last_read_times() -> None:
     """Test that a ReadState can have multiple LastReadTime instances."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread1 = CommentThread.objects.create(
@@ -665,12 +595,8 @@ def test_readstate_multiple_last_read_times() -> None:
         thread_type="discussion",
         context="course",
     )
-    LastReadTime.objects.create(
-        read_state=read_state, comment_thread=comment_thread1, timestamp=timezone.now()
-    )
-    LastReadTime.objects.create(
-        read_state=read_state, comment_thread=comment_thread2, timestamp=timezone.now()
-    )
+    LastReadTime.objects.create(read_state=read_state, comment_thread=comment_thread1, timestamp=timezone.now())
+    LastReadTime.objects.create(read_state=read_state, comment_thread=comment_thread2, timestamp=timezone.now())
     assert read_state.last_read_times.count() == 2
     assert read_state.last_read_times.filter(comment_thread=comment_thread1).exists()
     assert read_state.last_read_times.filter(comment_thread=comment_thread2).exists()
@@ -679,9 +605,7 @@ def test_readstate_multiple_last_read_times() -> None:
 @pytest.mark.django_db
 def test_readstate_last_read_time_update() -> None:
     """Test that updating a LastReadTime instance updates the read state's last read time."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread = CommentThread.objects.create(
@@ -698,18 +622,13 @@ def test_readstate_last_read_time_update() -> None:
     new_timestamp = timezone.now() + timedelta(hours=1)
     last_read_time.timestamp = new_timestamp
     last_read_time.save()
-    assert (
-        read_state.last_read_times.get(comment_thread=comment_thread).timestamp
-        == new_timestamp
-    )
+    assert read_state.last_read_times.get(comment_thread=comment_thread).timestamp == new_timestamp
 
 
 @pytest.mark.django_db
 def test_readstate_last_read_time_delete() -> None:
     """Test that deleting a LastReadTime instance removes it from the read state's last read times."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     course_id = "course123"
     read_state = ReadState.objects.create(user=user, course_id=course_id)
     comment_thread = CommentThread.objects.create(
@@ -730,9 +649,7 @@ def test_readstate_last_read_time_delete() -> None:
 @pytest.mark.django_db
 def test_uservotes_creation() -> None:
     """Test that creating a UserVote instance creates a vote for the user."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     content = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -750,9 +667,7 @@ def test_uservotes_creation() -> None:
 @pytest.mark.django_db
 def test_uservotes_update() -> None:
     """Test that updating a UserVote instance updates the vote for the user."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     content = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -770,9 +685,7 @@ def test_uservotes_update() -> None:
 @pytest.mark.django_db
 def test_uservotes_delete() -> None:
     """Test that deleting a UserVote instance removes the vote for the user."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     content = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -789,9 +702,7 @@ def test_uservotes_delete() -> None:
 @pytest.mark.django_db
 def test_uservotes_generic_foreign_key() -> None:
     """Test that the generic foreign key is correctly set."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     content1 = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -816,12 +727,8 @@ def test_uservotes_generic_foreign_key() -> None:
 def test_subscription_creation() -> None:
     """Test that a subscription is created when a user votes on a content."""
     content_type = ContentType.objects.get_for_model(CommentThread)
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
-    subscription = Subscription.objects.create(
-        subscriber=user, source_content_type=content_type, source_object_id=1
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
+    subscription = Subscription.objects.create(subscriber=user, source_content_type=content_type, source_object_id=1)
     assert subscription.subscriber == user
     assert subscription.source_content_type == content_type
     assert subscription.source_object_id == 1
@@ -831,24 +738,16 @@ def test_subscription_creation() -> None:
 def test_subscription_unique_together() -> None:
     """Test that the unique together constraint is enforced."""
     content_type = ContentType.objects.get_for_model(CommentThread)
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
-    Subscription.objects.create(
-        subscriber=user, source_content_type=content_type, source_object_id=1
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
+    Subscription.objects.create(subscriber=user, source_content_type=content_type, source_object_id=1)
     with pytest.raises(IntegrityError):
-        Subscription.objects.create(
-            subscriber=user, source_content_type=content_type, source_object_id=1
-        )
+        Subscription.objects.create(subscriber=user, source_content_type=content_type, source_object_id=1)
 
 
 @pytest.mark.django_db
 def test_comment_thread_author_username_set_on_creation() -> None:
     """Test that author_username is automatically set on CommentThread creation."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -863,9 +762,7 @@ def test_comment_thread_author_username_set_on_creation() -> None:
 @pytest.mark.django_db
 def test_comment_author_username_set_on_creation() -> None:
     """Test that author_username is automatically set on Comment creation."""
-    user = User.objects.create(
-        username="testuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="testuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -886,9 +783,7 @@ def test_comment_author_username_set_on_creation() -> None:
 @pytest.mark.django_db
 def test_comment_thread_author_username_preserved_when_provided() -> None:
     """Test that author_username is preserved when explicitly provided."""
-    user = User.objects.create(
-        username="newusername", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="newusername", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         author_username="originalusername",
@@ -904,9 +799,7 @@ def test_comment_thread_author_username_preserved_when_provided() -> None:
 @pytest.mark.django_db
 def test_comment_author_username_preserved_when_provided() -> None:
     """Test that author_username is preserved when explicitly provided."""
-    user = User.objects.create(
-        username="newusername", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="newusername", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -928,9 +821,7 @@ def test_comment_author_username_preserved_when_provided() -> None:
 @pytest.mark.django_db
 def test_comment_thread_retired_username_priority_on_creation() -> None:
     """Test that retired_username takes priority when set during creation."""
-    user = User.objects.create(
-        username="retired_user_abc123", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="retired_user_abc123", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         retired_username="originaluser",
@@ -948,9 +839,7 @@ def test_comment_thread_retired_username_priority_on_creation() -> None:
 @pytest.mark.django_db
 def test_comment_retired_username_priority_on_creation() -> None:
     """Test that retired_username takes priority when set during creation."""
-    user = User.objects.create(
-        username="retired_user_abc123", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="retired_user_abc123", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -974,9 +863,7 @@ def test_comment_retired_username_priority_on_creation() -> None:
 @pytest.mark.django_db
 def test_comment_thread_to_dict_uses_author_username() -> None:
     """Test that to_dict uses author_username when available."""
-    user = User.objects.create(
-        username="currentuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="currentuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         author_username="historicaluser",
@@ -993,9 +880,7 @@ def test_comment_thread_to_dict_uses_author_username() -> None:
 @pytest.mark.django_db
 def test_comment_to_dict_uses_author_username() -> None:
     """Test that to_dict uses author_username when available."""
-    user = User.objects.create(
-        username="currentuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="currentuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -1018,9 +903,7 @@ def test_comment_to_dict_uses_author_username() -> None:
 @pytest.mark.django_db
 def test_comment_thread_to_dict_fallback_to_retired_username() -> None:
     """Test that to_dict falls back to retired_username when author_username is None."""
-    user = User.objects.create(
-        username="retired_user_abc123", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="retired_user_abc123", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         retired_username="retireduser",
@@ -1041,9 +924,7 @@ def test_comment_thread_to_dict_fallback_to_retired_username() -> None:
 @pytest.mark.django_db
 def test_comment_to_dict_fallback_to_retired_username() -> None:
     """Test that to_dict falls back to retired_username when author_username is None."""
-    user = User.objects.create(
-        username="retired_user_abc123", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="retired_user_abc123", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -1070,9 +951,7 @@ def test_comment_to_dict_fallback_to_retired_username() -> None:
 @pytest.mark.django_db
 def test_comment_thread_to_dict_fallback_to_current_username() -> None:
     """Test that to_dict falls back to current username when both author_username and retired_username are None."""
-    user = User.objects.create(
-        username="currentuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="currentuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",
@@ -1093,9 +972,7 @@ def test_comment_thread_to_dict_fallback_to_current_username() -> None:
 @pytest.mark.django_db
 def test_comment_to_dict_fallback_to_current_username() -> None:
     """Test that to_dict falls back to current username when both author_username and retired_username are None."""
-    user = User.objects.create(
-        username="currentuser", email="test@example.com", password="password"
-    )
+    user = User.objects.create(username="currentuser", email="test@example.com", password="password")
     comment_thread = CommentThread.objects.create(
         author=user,
         course_id="course123",

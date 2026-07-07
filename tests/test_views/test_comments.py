@@ -1,6 +1,7 @@
 """Test comments api endpoints."""
 
 from typing import Any
+
 import pytest
 
 from test_utils.client import APIClient
@@ -89,9 +90,7 @@ def test_get_comment_api(api_client: APIClient, patched_get_backend: Any) -> Non
     assert comment["child_count"] == 0
 
 
-def test_update_comment_endorsed_api(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_update_comment_endorsed_api(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test updating the endorsed status of a parent comment.
     """
@@ -174,37 +173,25 @@ def test_delete_child_comment(api_client: APIClient, patched_get_backend: Any) -
     assert new_child_count == previous_child_count - 1
 
 
-def test_returns_400_when_comment_does_not_exist(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_returns_400_when_comment_does_not_exist(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test 400 status code in case of invalid comment."""
     backend = patched_get_backend
     incorrect_comment_id = backend.generate_id()
     response = api_client.get_json(f"/api/v2/comments/{incorrect_comment_id}", {})
     assert response.status_code == 400
 
-    assert response.json() == {
-        "error": f"Comment does not exist with Id: {incorrect_comment_id}"
-    }
+    assert response.json() == {"error": f"Comment does not exist with Id: {incorrect_comment_id}"}
 
-    response = api_client.put_json(
-        f"/api/v2/comments/{incorrect_comment_id}", data={"body": "new_body"}
-    )
+    response = api_client.put_json(f"/api/v2/comments/{incorrect_comment_id}", data={"body": "new_body"})
     assert response.status_code == 400
-    assert response.json() == {
-        "error": f"Comment does not exist with Id: {incorrect_comment_id}"
-    }
+    assert response.json() == {"error": f"Comment does not exist with Id: {incorrect_comment_id}"}
 
     response = api_client.delete_json(f"/api/v2/comments/{incorrect_comment_id}")
     assert response.status_code == 400
-    assert response.json() == {
-        "error": f"Comment does not exist with Id: {incorrect_comment_id}"
-    }
+    assert response.json() == {"error": f"Comment does not exist with Id: {incorrect_comment_id}"}
 
 
-def test_updates_body_correctly(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_updates_body_correctly(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test updating the body of a comment.
     """
@@ -238,9 +225,7 @@ def test_updates_body_correctly(
     assert edit_history[0]["editor_username"] == editing_username
 
 
-def test_updates_body_correctly_without_user_id(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_updates_body_correctly_without_user_id(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test updating the body of a comment without user id.
     """
@@ -258,9 +243,7 @@ def test_updates_body_correctly_without_user_id(
     assert ("edit_history" not in updated_comment) is True
 
 
-def test_update_endorsed_and_body_simultaneously(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_update_endorsed_and_body_simultaneously(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test updating the body and endorse status of a comment simultaneously.
     """
@@ -279,9 +262,7 @@ def test_update_endorsed_and_body_simultaneously(
     assert updated_comment["endorsed"] is True
 
 
-def test_thread_comment_post_api(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_thread_comment_post_api(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test creating a new parent comment.
     """

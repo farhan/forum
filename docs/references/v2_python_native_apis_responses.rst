@@ -312,8 +312,8 @@ The `pin_thread` API pins a discussion thread at the top for users to easily acc
         "id": "66df1595a3a68c001d742c05",
         "body": "<p>test question&nbsp;</p>",
         "course_id": "course-v1:Arbisoft+SE002+2024_S2",
-        "anonymous": False,
-        "anonymous_to_peers": False,
+        "anonymous": false,
+        "anonymous_to_peers": false,
         "created_at": "2024-09-09T15:34:45Z",
         "updated_at": "2024-09-18T16:27:05Z",
         "at_position_list": [],
@@ -328,16 +328,16 @@ The `pin_thread` API pins a discussion thread at the top for users to easily acc
         },
         "abuse_flaggers": [],
         "edit_history": [],
-        "closed": False,
+        "closed": false,
         "type": "thread",
         "thread_type": "question",
         "title": "test question",
         "context": "course",
         "last_activity_at": "2024-09-18T09:19:38Z",
-        "closed_by": None,
+        "closed_by": null,
         "tags": [],
-        "group_id": None,
-        "pinned": True
+        "group_id": null,
+        "pinned": true
     }
 
 Unpin Thread(unpin_thread) API
@@ -353,8 +353,8 @@ The `unpin_thread` API unpins a previously pinned thread, removing its elevated 
         "id": "66df1595a3a68c001d742c05",
         "body": "<p>test question&nbsp;</p>",
         "course_id": "course-v1:Arbisoft+SE002+2024_S2",
-        "anonymous": False,
-        "anonymous_to_peers": False,
+        "anonymous": false,
+        "anonymous_to_peers": false,
         "created_at": "2024-09-09T15:34:45Z",
         "updated_at": "2024-09-18T16:27:49Z",
         "at_position_list": [],
@@ -369,14 +369,14 @@ The `unpin_thread` API unpins a previously pinned thread, removing its elevated 
         },
         "abuse_flaggers": [],
         "edit_history": [],
-        "closed": False,
+        "closed": false,
         "type": "thread",
         "thread_type": "question",
         "title": "test question",
         "context": "course",
         "last_activity_at": "2024-09-18T09:19:38Z",
-        "closed_by": None,
+        "closed_by": null,
         "tags": [],
-        "group_id": None,
-        "pinned": False
+        "group_id": null,
+        "pinned": false
     }

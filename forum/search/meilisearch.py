@@ -59,16 +59,12 @@ def create_document(document: dict[str, t.Any], doc_id: str) -> dict[str, t.Any]
     return processed
 
 
-class MeilisearchDocumentBackend(
-    base.BaseDocumentSearchBackend, MeilisearchClientMixin
-):
+class MeilisearchDocumentBackend(base.BaseDocumentSearchBackend, MeilisearchClientMixin):
     """
     Simple document management.
     """
 
-    def index_document(
-        self, index_name: str, doc_id: str | int, document: dict[str, t.Any]
-    ) -> None:
+    def index_document(self, index_name: str, doc_id: str | int, document: dict[str, t.Any]) -> None:
         """
         Insert a single document in the Meilisearch index.
         """
@@ -76,9 +72,7 @@ class MeilisearchDocumentBackend(
         processed = create_document(document, str(doc_id))
         meilisearch_index.add_documents([processed])
 
-    def update_document(
-        self, index_name: str, doc_id: str | int, update_data: dict[str, t.Any]
-    ) -> None:
+    def update_document(self, index_name: str, doc_id: str | int, update_data: dict[str, t.Any]) -> None:
         """
         Updating is the same as inserting in meilisearch
         """
@@ -100,9 +94,7 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
 
     def initialize_indices(self, force_new_index: bool = False) -> None:
         filterable_fields = [m.PRIMARY_KEY_FIELD_NAME] + FILTERABLE_FIELDS
-        index_filterables = {
-            Model.index_name: filterable_fields for Model in MODEL_INDICES
-        }
+        index_filterables = {Model.index_name: filterable_fields for Model in MODEL_INDICES}
         if force_new_index:
             for index_name in index_filterables:
                 meilisearch_index_name = m.get_meilisearch_index_name(index_name)
@@ -110,9 +102,7 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
                 m.wait_for_task_to_succeed(self.meilisearch_client, task_info)
         m.create_indexes(index_filterables=index_filterables)
 
-    def rebuild_indices(
-        self, batch_size: int = 500, extra_catchup_minutes: int = 5
-    ) -> None:
+    def rebuild_indices(self, batch_size: int = 500, extra_catchup_minutes: int = 5) -> None:
         """
         Parse model instances and insert them in Meilisearch. Only MySQL-backed
         instances are supported.
@@ -125,10 +115,7 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
             paginator = Paginator(Model.objects.all(), per_page=batch_size)
             for page_number in paginator.page_range:
                 page = paginator.get_page(page_number)
-                documents = [
-                    create_document(obj.doc_to_hash(), str(obj.id))
-                    for obj in page.object_list
-                ]
+                documents = [create_document(obj.doc_to_hash(), str(obj.id)) for obj in page.object_list]
                 if documents:
                     meilisearch_index.add_documents(documents)
 
@@ -143,12 +130,8 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
         """
         In Meilisearch, this command consists of waiting for pending tasks.
         """
-        for enqueued_task in self.meilisearch_client.get_tasks(
-            {"statuses": ["enqueued", "processing"]}
-        ).results:
-            task = self.meilisearch_client.wait_for_task(
-                enqueued_task.uid, timeout_in_ms=5000
-            )
+        for enqueued_task in self.meilisearch_client.get_tasks({"statuses": ["enqueued", "processing"]}).results:
+            task = self.meilisearch_client.wait_for_task(enqueued_task.uid, timeout_in_ms=5000)
             if task.status != "succeeded":
                 raise RuntimeError(f"Failed meilisearch task: {task}")
 
@@ -160,9 +143,7 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
         self.initialize_indices(force_new_index=False)
 
 
-class MeilisearchThreadSearchBackend(
-    base.BaseThreadSearchBackend, MeilisearchClientMixin
-):
+class MeilisearchThreadSearchBackend(base.BaseThreadSearchBackend, MeilisearchClientMixin):
     """
     Thread search backend.
 
@@ -178,9 +159,9 @@ class MeilisearchThreadSearchBackend(
         group_ids: list[int],
         search_text: str,
         # This parameter is unsupported, but as far as we know it's not used anywhere.
-        sort_criteria: t.Optional[list[dict[str, str]]] = None,
-        commentable_ids: t.Optional[list[str]] = None,
-        course_id: t.Optional[str] = None,
+        sort_criteria: list[dict[str, str]] | None = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[str]:
         """
         Retrieve thread IDs based on search criteria.
@@ -214,7 +195,7 @@ class MeilisearchThreadSearchBackend(
         # Don't make the slightest attempt to sort results
         return list(thread_ids)
 
-    def get_suggested_text(self, search_text: str) -> t.Optional[str]:
+    def get_suggested_text(self, search_text: str) -> str | None:
         """
         Meilisearch does not support query suggestion
         https://github.com/orgs/meilisearch/discussions/740

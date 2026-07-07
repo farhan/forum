@@ -2,7 +2,7 @@
 This module contains the functions to update the flag status of a comment.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from forum.backend import get_backend
 from forum.serializers.comment import CommentSerializer
@@ -13,9 +13,9 @@ from forum.utils import ForumV2RequestError
 def update_comment_flag(
     comment_id: str,
     action: str,
-    user_id: Optional[str] = None,
-    update_all: Optional[bool] = False,
-    course_id: Optional[str] = None,
+    user_id: str | None = None,
+    update_all: bool | None = False,
+    course_id: str | None = None,
 ) -> dict[str, Any]:
     """
     Update the flag status of a comment.
@@ -38,18 +38,12 @@ def update_comment_flag(
         raise ForumV2RequestError("User / Comment doesn't exist")
 
     if action == "flag":
-        updated_comment = backend.flag_as_abuse(
-            user_id, comment_id, entity_type="Comment"
-        )
+        updated_comment = backend.flag_as_abuse(user_id, comment_id, entity_type="Comment")
     elif action == "unflag":
         if update_all:
-            updated_comment = backend.un_flag_all_as_abuse(
-                comment_id, entity_type="Comment"
-            )
+            updated_comment = backend.un_flag_all_as_abuse(comment_id, entity_type="Comment")
         else:
-            updated_comment = backend.un_flag_as_abuse(
-                user_id, comment_id, entity_type="Comment"
-            )
+            updated_comment = backend.un_flag_as_abuse(user_id, comment_id, entity_type="Comment")
     else:
         raise ForumV2RequestError("Invalid action")
 
@@ -70,9 +64,9 @@ def update_comment_flag(
 def update_thread_flag(
     thread_id: str,
     action: str,
-    user_id: Optional[str] = None,
-    update_all: Optional[bool] = False,
-    course_id: Optional[str] = None,
+    user_id: str | None = None,
+    update_all: bool | None = False,
+    course_id: str | None = None,
 ) -> dict[str, Any]:
     """
     Update the flag status of a thread.
@@ -92,18 +86,12 @@ def update_thread_flag(
         raise ForumV2RequestError("User / Thread doesn't exist")
 
     if action == "flag":
-        updated_thread = backend.flag_as_abuse(
-            user_id, thread_id, entity_type="CommentThread"
-        )
+        updated_thread = backend.flag_as_abuse(user_id, thread_id, entity_type="CommentThread")
     elif action == "unflag":
         if update_all:
-            updated_thread = backend.un_flag_all_as_abuse(
-                thread_id, entity_type="CommentThread"
-            )
+            updated_thread = backend.un_flag_all_as_abuse(thread_id, entity_type="CommentThread")
         else:
-            updated_thread = backend.un_flag_as_abuse(
-                user_id, thread_id, entity_type="CommentThread"
-            )
+            updated_thread = backend.un_flag_as_abuse(user_id, thread_id, entity_type="CommentThread")
     else:
         raise ForumV2RequestError("Invalid action")
 

@@ -2,7 +2,7 @@
 Serializer for the thread data.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
@@ -86,9 +86,7 @@ class ThreadSerializer(ContentSerializer):
         self.count_flagged = self.context_data.pop("count_flagged", False)
         self.include_endorsed = self.context_data.pop("include_endorsed", False)
         self.include_read_state = self.context_data.pop("include_read_state", False)
-        self.merge_question_type_responses = self.context_data.pop(
-            "merge_question_type_responses", False
-        )
+        self.merge_question_type_responses = self.context_data.pop("merge_question_type_responses", False)
 
         # Customize fields based on context
         if not self.with_responses:
@@ -109,7 +107,7 @@ class ThreadSerializer(ContentSerializer):
 
         super().__init__(*args, **kwargs)
 
-    def get_read(self, obj: dict[str, Any]) -> Optional[bool]:
+    def get_read(self, obj: dict[str, Any]) -> bool | None:
         """
         Retrieve the read state of the thread.
 
@@ -125,13 +123,13 @@ class ThreadSerializer(ContentSerializer):
             user_id = self.context_data.get("user_id", None)
             course_id = obj["course_id"]
             thread_key = obj["_id"]
-            is_read, _ = self.backend.get_read_states(
-                [obj["_id"]], user_id, course_id
-            ).get(thread_key, (False, obj["comment_count"]))
+            is_read, _ = self.backend.get_read_states([obj["_id"]], user_id, course_id).get(
+                thread_key, (False, obj["comment_count"])
+            )
             return is_read
         return None
 
-    def get_unread_comments_count(self, obj: dict[str, Any]) -> Optional[int]:
+    def get_unread_comments_count(self, obj: dict[str, Any]) -> int | None:
         """
         Retrieve the count of unread comments for the thread.
 
@@ -147,13 +145,13 @@ class ThreadSerializer(ContentSerializer):
             user_id = self.context_data.get("user_id", None)
             course_id = obj["course_id"]
             thread_key = obj["_id"]
-            _, unread_count = self.backend.get_read_states(
-                [obj["_id"]], user_id, course_id
-            ).get(thread_key, (False, obj["comment_count"]))
+            _, unread_count = self.backend.get_read_states([obj["_id"]], user_id, course_id).get(
+                thread_key, (False, obj["comment_count"])
+            )
             return unread_count
         return None
 
-    def get_endorsed(self, obj: dict[str, Any]) -> Optional[bool]:
+    def get_endorsed(self, obj: dict[str, Any]) -> bool | None:
         """
         Determine if the thread is endorsed.
 
@@ -187,7 +185,7 @@ class ThreadSerializer(ContentSerializer):
             return self.backend.get_abuse_flagged_count([thread_key]).get(thread_key, 0)
         return 0
 
-    def get_children(self, obj: dict[str, Any]) -> Optional[Any]:
+    def get_children(self, obj: dict[str, Any]) -> Any | None:
         """
         Retrieve the children (responses) for the thread if applicable.
 
@@ -260,10 +258,7 @@ class ThreadSerializer(ContentSerializer):
             data.pop("close_reason_code", None)
         if (
             self.with_responses
-            and (
-                not ("recursive" in self.context_data)
-                or self.context_data.get("recursive") is True
-            )
+            and ("recursive" not in self.context_data or self.context_data.get("recursive") is True)
             and data.get("thread_type") == "question"
             and not self.merge_question_type_responses
         ):
@@ -288,7 +283,7 @@ class ThreadSerializer(ContentSerializer):
         """Raise NotImplementedError"""
         raise NotImplementedError
 
-    def get_closed_by(self, obj: dict[str, Any]) -> Optional[str]:
+    def get_closed_by(self, obj: dict[str, Any]) -> str | None:
         """Retrieve the username of the person who closed the object."""
         if closed_by_id := obj.get("closed_by_id"):
             return self.backend.get_username_from_id(closed_by_id)

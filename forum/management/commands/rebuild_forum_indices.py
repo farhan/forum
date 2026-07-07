@@ -49,11 +49,7 @@ class Command(BaseCommand):
         search_backend = get_index_search_backend()
 
         batch_size = get_int_value_from_collection(kwargs, "batch_size", 500)
-        extra_catchup_minutes = get_int_value_from_collection(
-            kwargs, "extra_catchup_minutes", 5
-        )
+        extra_catchup_minutes = get_int_value_from_collection(kwargs, "extra_catchup_minutes", 5)
 
-        search_backend.rebuild_indices(
-            batch_size=batch_size, extra_catchup_minutes=extra_catchup_minutes
-        )
+        search_backend.rebuild_indices(batch_size=batch_size, extra_catchup_minutes=extra_catchup_minutes)
         self.stdout.write(self.style.SUCCESS("Forum indices rebuilt successfully."))

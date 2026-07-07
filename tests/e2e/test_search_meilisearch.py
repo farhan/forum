@@ -4,8 +4,8 @@ Meilisearch end-to-end tests.
 
 import typing as t
 
-from django.test import override_settings
 import pytest
+from django.test import override_settings
 
 import forum.search.meilisearch
 
@@ -15,9 +15,7 @@ pytestmark = pytest.mark.django_db
 @pytest.fixture(autouse=True)
 def configure_meilisearch_search_backend() -> t.Generator[t.Any, t.Any, t.Any]:
     """Configure Django to use Meilisearch as a search backend."""
-    with override_settings(
-        FORUM_SEARCH_BACKEND="forum.search.meilisearch.MeilisearchBackend"
-    ):
+    with override_settings(FORUM_SEARCH_BACKEND="forum.search.meilisearch.MeilisearchBackend"):
         yield
 
 
@@ -35,18 +33,14 @@ def meilisearch_cleanup() -> None:
 def test_initialize_indexes() -> None:
     index_backend = forum.search.meilisearch.MeilisearchIndexBackend()
     index_backend.initialize_indices()
-    indexes = sorted(
-        [r.uid for r in index_backend.meilisearch_client.get_indexes()["results"]]
-    )
+    indexes = sorted([r.uid for r in index_backend.meilisearch_client.get_indexes()["results"]])
     assert [
         "comment_threads",
         "comments",
     ] == indexes
 
 
-def test_insert_document(
-    patched_get_backend: t.Any, user_data: tuple[str, str]
-) -> None:
+def test_insert_document(patched_get_backend: t.Any, user_data: tuple[str, str]) -> None:
     index_backend = forum.search.meilisearch.MeilisearchIndexBackend()
     index_backend.initialize_indices()
 

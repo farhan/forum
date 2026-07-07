@@ -14,14 +14,10 @@ class BaseDocumentSearchBackend:
     Abstract base class for document management.
     """
 
-    def index_document(
-        self, index_name: str, doc_id: str | int, document: dict[str, t.Any]
-    ) -> None:
+    def index_document(self, index_name: str, doc_id: str | int, document: dict[str, t.Any]) -> None:
         raise NotImplementedError
 
-    def update_document(
-        self, index_name: str, doc_id: str | int, update_data: dict[str, t.Any]
-    ) -> None:
+    def update_document(self, index_name: str, doc_id: str | int, update_data: dict[str, t.Any]) -> None:
         raise NotImplementedError
 
     def delete_document(self, index_name: str, doc_id: str | int) -> None:
@@ -36,9 +32,7 @@ class BaseIndexSearchBackend:
     def initialize_indices(self, force_new_index: bool = False) -> None:
         raise NotImplementedError
 
-    def rebuild_indices(
-        self, batch_size: int = 500, extra_catchup_minutes: int = 5
-    ) -> None:
+    def rebuild_indices(self, batch_size: int = 500, extra_catchup_minutes: int = 5) -> None:
         raise NotImplementedError
 
     def validate_indices(self) -> None:
@@ -66,16 +60,16 @@ class BaseThreadSearchBackend:
         context: str,
         group_ids: list[int],
         search_text: str,
-        sort_criteria: t.Optional[list[dict[str, str]]] = None,
-        commentable_ids: t.Optional[list[str]] = None,
-        course_id: t.Optional[str] = None,
+        sort_criteria: list[dict[str, str]] | None = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[str]:
         """
         Retrieve thread IDs based on search criteria.
         """
         raise NotImplementedError
 
-    def get_suggested_text(self, search_text: str) -> t.Optional[str]:
+    def get_suggested_text(self, search_text: str) -> str | None:
         """
         Retrieve text suggestions for a given search query.
 
@@ -89,9 +83,9 @@ class BaseThreadSearchBackend:
         context: str,
         group_ids: list[int],
         search_text: str,
-        sort_criteria: t.Optional[list[dict[str, str]]] = None,
-        commentable_ids: t.Optional[list[str]] = None,
-        course_id: t.Optional[str] = None,
+        sort_criteria: list[dict[str, str]] | None = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[str]:
         """
         The function is just used of mimicking the behaviour of the test cases.
@@ -113,6 +107,6 @@ class BaseSearchBackend:
     Abstract base search backend that exposes all search backend features.
     """
 
-    DOCUMENT_SEARCH_CLASS: t.Type[BaseDocumentSearchBackend]
-    INDEX_SEARCH_CLASS: t.Type[BaseIndexSearchBackend]
-    THREAD_SEARCH_CLASS: t.Type[BaseThreadSearchBackend]
+    DOCUMENT_SEARCH_CLASS: type[BaseDocumentSearchBackend]
+    INDEX_SEARCH_CLASS: type[BaseIndexSearchBackend]
+    THREAD_SEARCH_CLASS: type[BaseThreadSearchBackend]

@@ -1,6 +1,7 @@
 """Test flags api endpoints."""
 
 from typing import Any
+
 import pytest
 
 from test_utils.client import APIClient
@@ -125,9 +126,7 @@ def test_comment_flag_api(api_client: APIClient, patched_get_backend: Any) -> No
     assert comment["abuse_flaggers"] == []
 
 
-def test_comment_flag_api_invalid_data(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_comment_flag_api_invalid_data(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the comment flag API with invalid data.
 
@@ -146,9 +145,7 @@ def test_comment_flag_api_invalid_data(
     assert response.json() == {"error": "User / Comment doesn't exist"}
 
 
-def test_comment_flag_api_with_all_param(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_comment_flag_api_with_all_param(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the comment flag API with the `all` parameter.
 
@@ -221,7 +218,7 @@ def test_comment_flag_api_with_all_param(
     comment = backend.get_comment(unflagged_comment["id"])
     assert comment is not None
     assert comment["abuse_flaggers"] == []
-    assert set(comment["historical_abuse_flaggers"]) == set([flag_user, flag_user_2])
+    assert set(comment["historical_abuse_flaggers"]) == {flag_user, flag_user_2}
 
     # Test thread abuse and unabuse.
     response = api_client.put_json(
@@ -251,9 +248,7 @@ def test_comment_flag_api_with_all_param(
     assert thread["historical_abuse_flaggers"] == [flag_user]
 
 
-def test_flag_unflag_thread_twice(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_flag_unflag_thread_twice(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test flagging a thread, unflagging it, flagging it again, and unflagging it again.
     """
@@ -287,10 +282,7 @@ def test_flag_unflag_thread_twice(
     assert thread is not None
     assert thread["abuse_flaggers"] == [flag_user]
     # After first flag, historical_abuse_flaggers should be unchanged or contain flag_user
-    assert (
-        flag_user in thread["historical_abuse_flaggers"]
-        or thread["historical_abuse_flaggers"] == []
-    )
+    assert flag_user in thread["historical_abuse_flaggers"] or thread["historical_abuse_flaggers"] == []
 
     # Unflag the thread
     response = api_client.put_json(

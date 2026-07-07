@@ -1,13 +1,13 @@
 """Test forum mongodb migration commands."""
 
-from io import StringIO
 from datetime import timedelta
+from io import StringIO
 from typing import Any
 
 import pytest
 from bson import ObjectId
-from django.core.management import call_command
 from django.contrib.auth.models import User  # pylint: disable=E5142
+from django.core.management import call_command
 from django.utils import timezone
 from pymongo.database import Database
 
@@ -244,9 +244,7 @@ def test_migrate_subscriptions(patched_mongodb: Database[Any]) -> None:
 
     mongo_thread = MongoContent.objects.get(mongo_id=str(comment_thread_id))
 
-    assert Subscription.objects.filter(
-        subscriber=user, source_object_id=mongo_thread.content_object_id
-    ).exists()
+    assert Subscription.objects.filter(subscriber=user, source_object_id=mongo_thread.content_object_id).exists()
 
 
 def test_delete_course_data(patched_mongodb: Database[Any]) -> None:
@@ -359,9 +357,7 @@ def test_delete_dry_run(patched_mongodb: Database[Any]) -> None:
         }
     )
     out = StringIO()
-    call_command(
-        "forum_delete_course_from_mongodb", "test_course", "--dry-run", stdout=out
-    )
+    call_command("forum_delete_course_from_mongodb", "test_course", "--dry-run", stdout=out)
 
     output = out.getvalue()
     assert "Performing dry run. No data will be deleted." in output
@@ -481,26 +477,16 @@ def test_last_read_times_migration(patched_mongodb: Database[Any]) -> None:
     assert thread.body == "Test body"
 
     read_state = ReadState.objects.get(user=user, course_id="test_course")
-    last_read_time = LastReadTime.objects.filter(
-        read_state=read_state, comment_thread=thread
-    ).first()
+    last_read_time = LastReadTime.objects.filter(read_state=read_state, comment_thread=thread).first()
     assert last_read_time is not None
 
     updated_last_read_time_for_thread = timezone.now()
     patched_mongodb.users.update_one(
         {"_id": "1"},
-        {
-            "$set": {
-                "read_states.0.last_read_times": {
-                    str(comment_thread_id): updated_last_read_time_for_thread
-                }
-            }
-        },
+        {"$set": {"read_states.0.last_read_times": {str(comment_thread_id): updated_last_read_time_for_thread}}},
     )
     call_command("forum_migrate_course_from_mongodb_to_mysql", "test_course")
-    updated_last_read_time = LastReadTime.objects.filter(
-        read_state=read_state, comment_thread=thread
-    ).first()
+    updated_last_read_time = LastReadTime.objects.filter(read_state=read_state, comment_thread=thread).first()
     assert updated_last_read_time is not None
     assert updated_last_read_time.timestamp > last_read_time.timestamp
 
@@ -1060,9 +1046,7 @@ def test_migrate_preserves_timestamps(patched_mongodb: Database[Any]) -> None:
     )
 
     # Verify subscription timestamps are preserved
-    subscription = Subscription.objects.get(
-        subscriber_id=1, source_object_id=mongo_thread.content_object_id
-    )
+    subscription = Subscription.objects.get(subscriber_id=1, source_object_id=mongo_thread.content_object_id)
 
     subscription_created_age = now - subscription.created_at
     assert subscription_created_age > timedelta(days=24), (

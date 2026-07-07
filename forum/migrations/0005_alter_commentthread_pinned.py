@@ -11,7 +11,6 @@ def backfill_pinned_false(apps: Any, schema_editor: Any) -> None:
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("forum", "0004_add_author_username_fields"),
     ]

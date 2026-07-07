@@ -1,7 +1,7 @@
 """Migration commands helper methods."""
 
-from typing import Any
 import logging
+from typing import Any
 
 from django.contrib.auth.models import User  # pylint: disable=E5142
 from django.core.management.base import OutputWrapper
@@ -23,7 +23,7 @@ from forum.models import (
     Subscription,
     UserVote,
 )
-from forum.utils import make_aware, get_trunc_title
+from forum.utils import get_trunc_title, make_aware
 
 logger = logging.getLogger(__name__)
 
@@ -165,8 +165,7 @@ def create_or_update_comment(comment_data: dict[str, Any]) -> None:
     mongo_thread = MongoContent.objects.filter(mongo_id=mongo_thread_id).first()
     if not mongo_thread:
         logger.warning(
-            f"Thread mapping not found for comment {comment_data.get('_id')} "
-            f"(mongo_thread_id={mongo_thread_id})"
+            f"Thread mapping not found for comment {comment_data.get('_id')} (mongo_thread_id={mongo_thread_id})"
         )
         return
     thread = CommentThread.objects.filter(pk=mongo_thread.content_object_id).first()
@@ -181,14 +180,9 @@ def create_or_update_comment(comment_data: dict[str, Any]) -> None:
         parent_id = str(comment_data["parent_id"])
         mongo_parent_comment = MongoContent.objects.filter(mongo_id=parent_id).first()
         if not mongo_parent_comment:
-            logger.warning(
-                f"Parent mapping not found for comment {comment_data.get('_id')} "
-                f"(parent_id={parent_id})"
-            )
+            logger.warning(f"Parent mapping not found for comment {comment_data.get('_id')} (parent_id={parent_id})")
             return
-        parent = Comment.objects.filter(
-            id=mongo_parent_comment.content_object_id
-        ).first()
+        parent = Comment.objects.filter(id=mongo_parent_comment.content_object_id).first()
         if not parent:
             logger.warning(
                 f"Skipping comment {comment_data.get('_id')}: parent object not found "
@@ -196,9 +190,7 @@ def create_or_update_comment(comment_data: dict[str, Any]) -> None:
             )
             return
 
-    mongo_comment, _ = MongoContent.objects.get_or_create(
-        mongo_id=str(comment_data["_id"])
-    )
+    mongo_comment, _ = MongoContent.objects.get_or_create(mongo_id=str(comment_data["_id"]))
     if not mongo_comment.content_object_id:
         comment = Comment.objects.create(
             author=author,
@@ -254,13 +246,9 @@ def create_or_update_edit_history(content: dict[str, Any]) -> None:
     content_type = CommentThread if content["_type"] == "CommentThread" else Comment
     mongo_content = MongoContent.objects.filter(mongo_id=str(content["_id"])).first()
     if not mongo_content:
-        logger.warning(
-            f"Skipping edit history for content {content.get('_id')}: mapping not found"
-        )
+        logger.warning(f"Skipping edit history for content {content.get('_id')}: mapping not found")
         return
-    content_object = content_type.objects.filter(
-        pk=mongo_content.content_object_id
-    ).first()
+    content_object = content_type.objects.filter(pk=mongo_content.content_object_id).first()
     if not content_object:
         logger.warning(
             f"Skipping edit history for content {content.get('_id')}: target object not found "
@@ -288,13 +276,9 @@ def create_or_update_abuse_flaggers(content: dict[str, Any]) -> None:
     content_type = CommentThread if content["_type"] == "CommentThread" else Comment
     mongo_content = MongoContent.objects.filter(mongo_id=str(content["_id"])).first()
     if not mongo_content:
-        logger.warning(
-            f"Skipping abuse flaggers for content {content.get('_id')}: mapping not found"
-        )
+        logger.warning(f"Skipping abuse flaggers for content {content.get('_id')}: mapping not found")
         return
-    content_object = content_type.objects.filter(
-        pk=mongo_content.content_object_id
-    ).first()
+    content_object = content_type.objects.filter(pk=mongo_content.content_object_id).first()
     if not content_object:
         logger.warning(
             f"Skipping abuse flaggers for content {content.get('_id')}: target object not found "
@@ -334,18 +318,12 @@ def migrate_subscriptions(db: Database[dict[str, Any]], content_id: str) -> None
         user = get_user_or_none(sub["subscriber_id"])
         if not user:
             continue
-        content_type = (
-            CommentThread if sub["source_type"] == "CommentThread" else Comment
-        )
+        content_type = CommentThread if sub["source_type"] == "CommentThread" else Comment
         mongo_content = MongoContent.objects.filter(mongo_id=str(content_id)).first()
         if not mongo_content:
-            logger.warning(
-                f"Skipping subscription for source {content_id}: mapping not found"
-            )
+            logger.warning(f"Skipping subscription for source {content_id}: mapping not found")
             continue
-        content = content_type.objects.filter(
-            pk=mongo_content.content_object_id
-        ).first()
+        content = content_type.objects.filter(pk=mongo_content.content_object_id).first()
         if not content:
             logger.warning(
                 f"Skipping subscription for source {content_id}: target object not found "
@@ -391,12 +369,8 @@ def migrate_read_states(db: Database[dict[str, Any]], course_id: str) -> None:
         for read_state in user_data.get("read_states", []):
             if read_state["course_id"] == course_id:
                 rs, _ = ReadState.objects.get_or_create(user=user, course_id=course_id)
-                for thread_id, timestamp in read_state.get(
-                    "last_read_times", {}
-                ).items():
-                    mongo_content = MongoContent.objects.filter(
-                        mongo_id=thread_id
-                    ).first()
+                for thread_id, timestamp in read_state.get("last_read_times", {}).items():
+                    mongo_content = MongoContent.objects.filter(mongo_id=thread_id).first()
                     thread = mongo_content and mongo_content.content
 
                     # For older courses using cs_comment_service, the thread may be None
@@ -405,9 +379,7 @@ def migrate_read_states(db: Database[dict[str, Any]], course_id: str) -> None:
                     # have a thread with deleted thread_id from read_states.
                     if not thread:
                         continue
-                    existing_read_time = LastReadTime.objects.filter(
-                        read_state=rs, comment_thread=thread
-                    ).first()
+                    existing_read_time = LastReadTime.objects.filter(read_state=rs, comment_thread=thread).first()
                     if not existing_read_time:
                         LastReadTime.objects.create(
                             read_state=rs,
@@ -428,18 +400,12 @@ def delete_course_data(
     """Delete content (threads and comments)."""
     contents = db.contents.find({"course_id": course_id})
     for content in contents:
-        subscriptions = (
-            db.subscriptions.delete_many({"source_id": str(content["_id"])})
-            if not dry_run
-            else None
-        )
+        subscriptions = db.subscriptions.delete_many({"source_id": str(content["_id"])}) if not dry_run else None
     stdout.write(
         f"Subscription documents to be deleted: {subscriptions.deleted_count if subscriptions else 'N/A (dry run)'}"
     )
 
-    content_result = (
-        db.contents.delete_many({"course_id": course_id}) if not dry_run else None
-    )
+    content_result = db.contents.delete_many({"course_id": course_id}) if not dry_run else None
     stdout.write(
         f"Content documents to be deleted: {content_result.deleted_count if content_result else 'N/A (dry run)'}"
     )

@@ -41,9 +41,7 @@ class UserAPIView(APIView):
         complete = str_to_bool(params.get("complete", False))
 
         try:
-            user_data: dict[str, Any] = get_user(
-                user_id, group_ids, course_id, complete
-            )
+            user_data: dict[str, Any] = get_user(user_id, group_ids, course_id, complete)
         except ForumV2RequestError as e:
             return Response({"error": str(e)}, status=status.HTTP_404_NOT_FOUND)
 
@@ -212,9 +210,7 @@ class BulkDeleteUserPostsAPIView(APIView):
         """Return thread_count and comment_count for user in course."""
         course_id = request.query_params.get("course_id")
         if not course_id:
-            return Response(
-                {"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             data = get_user_post_counts(user_id, course_id)
         except ForumV2RequestError as e:
@@ -225,9 +221,7 @@ class BulkDeleteUserPostsAPIView(APIView):
         """Delete all posts by user in course. Returns counts before deletion."""
         course_id = request.query_params.get("course_id")
         if not course_id:
-            return Response(
-                {"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "course_id is required"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             data = delete_user_posts(user_id, course_id)
         except ForumV2RequestError as e:

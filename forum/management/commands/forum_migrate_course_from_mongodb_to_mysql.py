@@ -2,8 +2,7 @@
 
 from typing import Any
 
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandParser
+from django.core.management.base import BaseCommand, CommandParser
 
 from forum.migration_helpers import (
     get_all_course_ids,
@@ -21,9 +20,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: CommandParser) -> None:
         """Add arguments to the command."""
-        parser.add_argument(
-            "courses", nargs="+", type=str, help="List of course IDs or `all`"
-        )
+        parser.add_argument("courses", nargs="+", type=str, help="List of course IDs or `all`")
 
     def handle(self, *args: str, **options: dict[str, Any]) -> None:
         """Handle the command."""

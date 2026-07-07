@@ -61,9 +61,7 @@ def get_thread(user: dict[str, Any], patched_get_backend: Any) -> dict[str, Any]
 
 
 @pytest.fixture(name="comment")
-def get_comment(
-    user: dict[str, Any], thread: dict[str, Any], patched_get_backend: Any
-) -> dict[str, Any]:
+def get_comment(user: dict[str, Any], thread: dict[str, Any], patched_get_backend: Any) -> dict[str, Any]:
     """
     Fixture to create and return a test comment.
 

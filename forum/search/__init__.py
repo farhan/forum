@@ -37,9 +37,7 @@ def _get_search_backend() -> base.BaseSearchBackend:
 
     By default, use the Elasticsearch search backend.
     """
-    search_backend_module_name = getattr(
-        settings, "FORUM_SEARCH_BACKEND", "forum.search.es.ElasticsearchBackend"
-    )
+    search_backend_module_name = getattr(settings, "FORUM_SEARCH_BACKEND", "forum.search.es.ElasticsearchBackend")
     module_name, class_name = search_backend_module_name.rsplit(".", 1)
     Backend = getattr(importlib.import_module(module_name), class_name)
     return Backend

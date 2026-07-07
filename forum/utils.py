@@ -1,8 +1,9 @@
 """Forum Utils."""
 
 import logging
+from collections.abc import Sequence
 from datetime import datetime
-from typing import Any, Sequence
+from typing import Any
 
 import requests
 from django.conf import settings
@@ -27,9 +28,7 @@ def handle_proxy_requests(request: HttpRequest, suffix: str, method: str) -> Res
     Returns:
         Response: The response from the proxied service.
     """
-    comments_service_url = getattr(
-        settings, "CS_COMMENTS_SERVICE_URL", "http://forum:4567"
-    )
+    comments_service_url = getattr(settings, "CS_COMMENTS_SERVICE_URL", "http://forum:4567")
     url = f"{comments_service_url}/api/v1/{suffix}"
     request_headers = {
         "X-Edx-Api-Key": request.headers.get("X-Edx-Api-Key", ""),
@@ -74,9 +73,7 @@ def str_to_bool(value: str | bool) -> bool:
     return value.lower() in ("true", "1")
 
 
-def get_int_value_from_collection(
-    collection: dict[str, Any], key: str, default_value: int
-) -> int:
+def get_int_value_from_collection(collection: dict[str, Any], key: str, default_value: int) -> int:
     """
     Get int value from the collection.
     """

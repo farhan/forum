@@ -19,7 +19,7 @@ Note: Update the image tag (i.e: "elasticsearch:7.17.13") to match the one used 
 """
 
 import time
-from typing import Any, Optional
+from typing import Any
 from unittest.mock import patch
 from urllib.parse import urlencode
 
@@ -43,9 +43,9 @@ def assert_result_total(response: Response, expected_total: int) -> None:
 def get_search_response(
     api_client: APIClient,
     params: dict[str, str],
-    get_thread_ids_value: Optional[list[str]] = None,
-    get_suggested_text_value: Optional[str] = "",
-    get_thread_ids_with_corrected_text_values: Optional[list[str]] = None,
+    get_thread_ids_value: list[str] | None = None,
+    get_suggested_text_value: str | None = "",
+    get_thread_ids_with_corrected_text_values: list[str] | None = None,
 ) -> Response:
     """
     Helper function to patch ElasticsearchThreadSearchBackend methods and get search response.
@@ -59,9 +59,7 @@ def get_search_response(
     """
 
     get_thread_ids_value = get_thread_ids_value or []
-    get_thread_ids_with_corrected_text_values = (
-        get_thread_ids_with_corrected_text_values or []
-    )
+    get_thread_ids_with_corrected_text_values = get_thread_ids_with_corrected_text_values or []
 
     with patch.object(
         ElasticsearchThreadSearchBackend,
@@ -79,9 +77,7 @@ def get_search_response(
                 return_value=get_thread_ids_with_corrected_text_values,
             ):
                 encoded_params = urlencode(params)
-                return api_client.get_json(
-                    f"/api/v2/search/threads?{encoded_params}", {}
-                )
+                return api_client.get_json(f"/api/v2/search/threads?{encoded_params}", {})
 
 
 def refresh_elastic_search_indices() -> None:
@@ -133,9 +129,7 @@ def test_invalid_request(api_client: APIClient, patched_get_backend: Any) -> Non
     assert response.status_code == 400
 
 
-def test_search_returns_empty_for_deleted_thread(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_search_returns_empty_for_deleted_thread(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test that searching for a deleted thread returns no results.
 
@@ -171,9 +165,7 @@ def test_search_returns_empty_for_deleted_thread(
     assert_result_total(response, 0)
 
 
-def test_search_returns_only_updated_thread(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_search_returns_only_updated_thread(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test that searching for a thread returns only the updated version.
 
@@ -213,9 +205,7 @@ def test_search_returns_only_updated_thread(
     assert_result_total(response, 1)
 
 
-def test_search_returns_empty_for_deleted_comment(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_search_returns_empty_for_deleted_comment(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test that searching for a deleted comment returns no results.
 
@@ -258,9 +248,7 @@ def test_search_returns_empty_for_deleted_comment(
     assert_result_total(response, 0)
 
 
-def test_search_returns_only_updated_comment(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_search_returns_only_updated_comment(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test that searching for a comment returns only the updated version.
 
@@ -385,16 +373,12 @@ def test_filter_threads(api_client: APIClient, patched_get_backend: Any) -> None
     refresh_elastic_search_indices()
 
     # Test filtering by course_id
-    def assert_response_contains(
-        response: Response, expected_indexes: list[int]
-    ) -> None:
+    def assert_response_contains(response: Response, expected_indexes: list[int]) -> None:
         assert response.status_code == 200
         threads = response.json()["collection"]
         expected_ids = {threads_ids[i] for i in expected_indexes}
         actual_ids = {thread["id"] for thread in threads}
-        assert (
-            actual_ids == expected_ids
-        ), f"Expected {expected_ids}, but got {actual_ids}"
+        assert actual_ids == expected_ids, f"Expected {expected_ids}, but got {actual_ids}"
 
     # Test filtering by course_id
     params = {"text": "text", "course_id": course_id_0}
@@ -469,9 +453,7 @@ def test_filter_threads(api_client: APIClient, patched_get_backend: Any) -> None
 
     # Test filtering by commentable_ids
     params = {"text": "text", "commentable_ids": "commentable0,commentable1"}
-    response = get_search_response(
-        api_client, params, [threads_ids[i] for i in range(35) if i % 3 in [0, 1]]
-    )
+    response = get_search_response(api_client, params, [threads_ids[i] for i in range(35) if i % 3 in [0, 1]])
     assert_response_contains(response, [i for i in range(30) if i % 3 in [0, 1]])
 
     # Test filtering by group_id
@@ -521,7 +503,7 @@ def test_pagination(api_client: APIClient, patched_get_backend: Any) -> None:
 
     refresh_elastic_search_indices()
 
-    def check_pagination(per_page: Optional[int], num_pages: int) -> None:
+    def check_pagination(per_page: int | None, num_pages: int) -> None:
         result_ids = []
         params = {"text": "text"}
         if per_page:
@@ -586,7 +568,7 @@ def test_sorting(api_client: APIClient, patched_get_backend: Any) -> None:
     backend.update_thread(thread_id=threads_ids[2], votes=votes)
     refresh_elastic_search_indices()
 
-    def fetch_and_check(sort_key: Optional[str], expected_indexes: list[int]) -> None:
+    def fetch_and_check(sort_key: str | None, expected_indexes: list[int]) -> None:
         params = {"text": "text"}
         if sort_key:
             params["sort_key"] = str(sort_key)
@@ -597,9 +579,7 @@ def test_sorting(api_client: APIClient, patched_get_backend: Any) -> None:
         threads = result["collection"]
         expected_ids = [threads_ids[i] for i in expected_indexes]
         actual_ids = [thread["id"] for thread in threads]
-        assert (
-            actual_ids == expected_ids
-        ), f"Expected {expected_ids}, but got {actual_ids}"
+        assert actual_ids == expected_ids, f"Expected {expected_ids}, but got {actual_ids}"
 
     # Test various sorting scenarios
     # fetch_and_check("date", [5, 4, 3, 2, 1, 0])
@@ -647,7 +627,7 @@ def test_spelling_correction(api_client: APIClient, patched_get_backend: Any) ->
         else:
             return []
 
-    def check_correction(original_text: str, corrected_text: Optional[str]) -> None:
+    def check_correction(original_text: str, corrected_text: str | None) -> None:
         params = {"text": original_text}
         get_thread_ids_value = get_threda_ids_for_fixtures(original_text)
         response = get_search_response(
@@ -659,12 +639,10 @@ def test_spelling_correction(api_client: APIClient, patched_get_backend: Any) ->
         )
         assert response.status_code == 200
         result = response.json()
-        assert (
-            result.get("corrected_text") == corrected_text
-        ), f"Expected '{corrected_text}', but got '{result.get('corrected_text')}'"
-        assert result[
-            "collection"
-        ], f"Expected non-empty collection for '{original_text}', but got empty."
+        assert result.get("corrected_text") == corrected_text, (
+            f"Expected '{corrected_text}', but got '{result.get('corrected_text')}'"
+        )
+        assert result["collection"], f"Expected non-empty collection for '{original_text}', but got empty."
 
     # Test: can correct a word appearing only in a comment
     check_correction("pinapples", "pineapples")
@@ -688,9 +666,7 @@ def test_spelling_correction(api_client: APIClient, patched_get_backend: Any) ->
     check_correction("greed", None)
 
 
-def test_spelling_correction_with_mush_clause(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_spelling_correction_with_mush_clause(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the spelling correction feature & mush clause in the search.
     Verifies the even if the text matches with the threds it should also consider other
@@ -725,15 +701,11 @@ def test_spelling_correction_with_mush_clause(
     assert response.status_code == 200
     result = response.json()
     corrected_text = result.get("corrected_text")
-    assert (
-        corrected_text is None
-    ), f"Expected 'corrected_text' to be None, but got a value '{corrected_text}'."
+    assert corrected_text is None, f"Expected 'corrected_text' to be None, but got a value '{corrected_text}'."
     assert not result["collection"], "Expected an empty collection, but got results."
 
 
-def test_total_results_and_num_pages(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_total_results_and_num_pages(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the total number of results and pagination of search results.
     Ensures that the total count of search results and the number of pages are calculated
@@ -788,20 +760,18 @@ def test_total_results_and_num_pages(
             return threads_ids[::100]
         return []
 
-    def test_text(
-        text: str, expected_total_results: int, expected_num_pages: int
-    ) -> None:
+    def test_text(text: str, expected_total_results: int, expected_num_pages: int) -> None:
         params = {"course_id": course_id, "text": text, "per_page": "10"}
         get_thread_ids_value = get_thread_ids_for_fixture(text)
         response = get_search_response(api_client, params, get_thread_ids_value)
         assert response.status_code == 200
         result = response.json()
-        assert (
-            result["total_results"] == expected_total_results
-        ), f"Expected total_results {expected_total_results}, but got {result['total_results']}"
-        assert (
-            result["num_pages"] == expected_num_pages
-        ), f"Expected num_pages {expected_num_pages}, but got {result['num_pages']}"
+        assert result["total_results"] == expected_total_results, (
+            f"Expected total_results {expected_total_results}, but got {result['total_results']}"
+        )
+        assert result["num_pages"] == expected_num_pages, (
+            f"Expected num_pages {expected_num_pages}, but got {result['num_pages']}"
+        )
 
     # Running the tests
     test_text("all", 100, 10)

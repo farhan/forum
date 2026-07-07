@@ -1,19 +1,20 @@
 """Admin module for forum."""
 
 from django.contrib import admin
+
 from forum.models import (
-    ForumUser,
-    CourseStat,
-    CommentThread,
-    Comment,
-    EditHistory,
     AbuseFlagger,
+    Comment,
+    CommentThread,
+    CourseStat,
+    EditHistory,
+    ForumUser,
     HistoricalAbuseFlagger,
-    ReadState,
     LastReadTime,
-    UserVote,
-    Subscription,
     MongoContent,
+    ReadState,
+    Subscription,
+    UserVote,
 )
 
 

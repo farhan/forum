@@ -1,6 +1,7 @@
 """Tests for Users apis."""
 
 from typing import Any
+
 import pytest
 
 from forum.constants import RETIRED_BODY, RETIRED_TITLE
@@ -41,18 +42,14 @@ def test_create_user(api_client: APIClient, patched_get_backend: Any) -> None:
     backend = patched_get_backend
     user_id = backend.generate_id()
     username = "test-user"
-    response = api_client.post_json(
-        "/api/v2/users", data={"id": user_id, "username": username}
-    )
+    response = api_client.post_json("/api/v2/users", data={"id": user_id, "username": username})
     assert response.status_code == 200
     user = backend.get_user(user_id)
     assert user
     assert user["username"] == username
 
 
-def test_create_user_with_existing_id(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_create_user_with_existing_id(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test create user with an existing id."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -61,15 +58,11 @@ def test_create_user_with_existing_id(
         user_id,
         username,
     )
-    response = api_client.post_json(
-        "/api/v2/users", data={"id": user_id, "username": "test-user-2"}
-    )
+    response = api_client.post_json("/api/v2/users", data={"id": user_id, "username": "test-user-2"})
     assert response.status_code == 400
 
 
-def test_create_user_with_existing_username(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_create_user_with_existing_username(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test create user with an existing username."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -78,9 +71,7 @@ def test_create_user_with_existing_username(
         user_id,
         username,
     )
-    response = api_client.post_json(
-        "/api/v2/users", data={"id": backend.generate_id(), "username": username}
-    )
+    response = api_client.post_json("/api/v2/users", data={"id": backend.generate_id(), "username": username})
     assert response.status_code == 400
 
 
@@ -94,30 +85,22 @@ def test_update_user(api_client: APIClient, patched_get_backend: Any) -> None:
         user_id,
         username,
     )
-    response = api_client.put_json(
-        f"/api/v2/users/{user_id}", data={"username": new_username}
-    )
+    response = api_client.put_json(f"/api/v2/users/{user_id}", data={"username": new_username})
     assert response.status_code == 200
     user = backend.get_user(user_id)
     assert user
     assert user["username"] == new_username
 
 
-def test_update_non_existent_user(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_update_non_existent_user(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test updating non-existent user."""
     backend = patched_get_backend
     user_id = backend.generate_id()
-    response = api_client.put_json(
-        f"/api/v2/users/{user_id}", data={"username": "new-test-user"}
-    )
+    response = api_client.put_json(f"/api/v2/users/{user_id}", data={"username": "new-test-user"})
     assert response.status_code == 200
 
 
-def test_update_user_with_conflicting_info(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_update_user_with_conflicting_info(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test updating user with conflicting information."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -131,9 +114,7 @@ def test_update_user_with_conflicting_info(
         backend.generate_id(),
         conflicting_username,
     )
-    response = api_client.put_json(
-        f"/api/v2/users/{user_id}", data={"username": conflicting_username}
-    )
+    response = api_client.put_json(f"/api/v2/users/{user_id}", data={"username": conflicting_username})
     assert response.status_code == 400
 
 
@@ -161,9 +142,7 @@ def test_get_non_existent_user(api_client: APIClient, patched_get_backend: Any) 
     assert response.status_code == 404
 
 
-def test_get_user_with_no_votes(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_user_with_no_votes(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test getting user with no votes."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -204,9 +183,7 @@ def test_get_user_with_votes(api_client: APIClient, patched_get_backend: Any) ->
     user = backend.get_user(user_id)
     assert thread
     assert user
-    backend.upvote_content(
-        thread["_id"], user["external_id"], content_type="CommentThread"
-    )
+    backend.upvote_content(thread["_id"], user["external_id"], content_type="CommentThread")
     response = api_client.get(f"/api/v2/users/{user_id}?complete=true")
     assert response.status_code == 200
     user = response.json()
@@ -214,9 +191,7 @@ def test_get_user_with_votes(api_client: APIClient, patched_get_backend: Any) ->
     assert user["upvoted_ids"] == [thread_id]
 
 
-def test_get_active_threads_requires_course_id(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_active_threads_requires_course_id(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test getting active threads requires course id."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -250,9 +225,7 @@ def test_get_active_threads(api_client: APIClient, patched_get_backend: Any) -> 
     assert len(threads) == 10
 
 
-def test_marks_thread_as_read_for_user(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_marks_thread_as_read_for_user(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test marking a thread as read for a user."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -310,9 +283,7 @@ def test_replaces_username(api_client: APIClient, patched_get_backend: Any) -> N
     assert user["username"] == username
 
     new_username = "test_username_replacement"
-    response = api_client.post_json(
-        f"/api/v2/users/{user_id}/replace_username", data={"new_username": new_username}
-    )
+    response = api_client.post_json(f"/api/v2/users/{user_id}/replace_username", data={"new_username": new_username})
     assert response.status_code == 200
     updated_user = backend.get_user(user_id)
     assert updated_user
@@ -324,15 +295,11 @@ def test_attempts_to_replace_username_of_non_existent_user(
 ) -> None:
     """Test replace_username api."""
     new_username = "test_username_replacement"
-    response = api_client.post_json(
-        "/api/v2/users/1234/replace_username", data={"new_username": new_username}
-    )
+    response = api_client.post_json("/api/v2/users/1234/replace_username", data={"new_username": new_username})
     assert response.status_code == 400
 
 
-def test_attempts_to_replace_username_and_username_on_content(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_attempts_to_replace_username_and_username_on_content(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test replace_username api with content."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -345,9 +312,7 @@ def test_attempts_to_replace_username_and_username_on_content(
     user = backend.get_user(user_id)
     new_username = "test_username_replacement"
 
-    response = api_client.post_json(
-        f"/api/v2/users/{user_id}/replace_username", data={"new_username": new_username}
-    )
+    response = api_client.post_json(f"/api/v2/users/{user_id}/replace_username", data={"new_username": new_username})
     assert response.status_code == 200
 
     user = backend.get_user(user_id)
@@ -390,9 +355,7 @@ def test_attempts_to_retire_user_without_sending_retired_username(
     assert response.status_code == 500
 
 
-def test_attempts_to_retire_non_existent_user(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_attempts_to_retire_non_existent_user(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test retire non-existent user."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -437,9 +400,7 @@ def test_retire_user(api_client: APIClient, patched_get_backend: Any) -> None:
         assert content["author_username"] == retired_username
 
 
-def test_retire_user_with_subscribed_threads(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_retire_user_with_subscribed_threads(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test retire user with subscribed threads."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -467,9 +428,7 @@ def test_retire_user_with_subscribed_threads(
         }
     )
     backend.subscribe_user(user_id, thread_id, "CommentThread")
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?course_id=course1"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?course_id=course1")
     assert response.status_code == 200
     body = response.json()
     assert body["thread_count"] == 1
@@ -544,9 +503,7 @@ def test_get_user_post_counts(api_client: APIClient, patched_get_backend: Any) -
     assert data["comment_count"] == 3
 
 
-def test_get_user_post_counts_missing_course_id(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_user_post_counts_missing_course_id(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test that GET /users/<user_id>/posts returns 400 when course_id is missing."""
     backend = patched_get_backend
     user_id = backend.generate_id()
@@ -555,9 +512,7 @@ def test_get_user_post_counts_missing_course_id(
     assert response.status_code == 400
 
 
-def test_get_user_post_counts_invalid_user(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_user_post_counts_invalid_user(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test that GET /users/<user_id>/posts returns 404 for unknown user."""
     backend = patched_get_backend
     assert backend.get_user("999999") is None
@@ -594,9 +549,7 @@ def test_delete_user_posts(api_client: APIClient, patched_get_backend: Any) -> N
             }
         )
         thread_ids.append(thread_id)
-    response = api_client.delete_json(
-        f"/api/v2/users/{user_id}/posts?course_id={course_id}"
-    )
+    response = api_client.delete_json(f"/api/v2/users/{user_id}/posts?course_id={course_id}")
     assert response.status_code == 200
     data = response.json()
     assert data["thread_count"] == 2
@@ -607,9 +560,7 @@ def test_delete_user_posts(api_client: APIClient, patched_get_backend: Any) -> N
     assert counts.json()["comment_count"] == 0
 
 
-def test_delete_user_posts_missing_course_id(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_delete_user_posts_missing_course_id(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test that DELETE /users/<user_id>/posts returns 400 when course_id is missing."""
     backend = patched_get_backend
     user_id = backend.generate_id()

@@ -2,7 +2,7 @@
 API for votes.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from forum.backend import get_backend
 from forum.serializers.comment import CommentSerializer
@@ -14,7 +14,7 @@ from forum.utils import ForumV2RequestError
 def _get_thread_and_user(
     thread_id: str,
     user_id: str,
-    course_id: Optional[str] = None,
+    course_id: str | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """
     Fetches the thread and user based on provided IDs.
@@ -41,9 +41,7 @@ def _get_thread_and_user(
     return thread, user
 
 
-def _prepare_thread_response(
-    thread: dict[str, Any], user: dict[str, Any], backend: Any
-) -> dict[str, Any]:
+def _prepare_thread_response(thread: dict[str, Any], user: dict[str, Any], backend: Any) -> dict[str, Any]:
     """
     Prepares the serialized response data after voting.
 
@@ -70,9 +68,7 @@ def _prepare_thread_response(
     return serializer.data
 
 
-def update_thread_votes(
-    thread_id: str, user_id: str, value: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def update_thread_votes(thread_id: str, user_id: str, value: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Updates the votes for a thread.
 
@@ -94,13 +90,9 @@ def update_thread_votes(
         raise ForumV2RequestError(str(error)) from error
 
     if vote_serializer.data["value"] == "up":
-        is_updated = backend.upvote_content(
-            thread_id, user_id, entity_type="CommentThread"
-        )
+        is_updated = backend.upvote_content(thread_id, user_id, entity_type="CommentThread")
     else:
-        is_updated = backend.downvote_content(
-            thread_id, user_id, entity_type="CommentThread"
-        )
+        is_updated = backend.downvote_content(thread_id, user_id, entity_type="CommentThread")
 
     if is_updated:
         thread = backend.get_thread(thread_id) or {}
@@ -108,9 +100,7 @@ def update_thread_votes(
     return _prepare_thread_response(thread, user, backend)
 
 
-def delete_thread_vote(
-    thread_id: str, user_id: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def delete_thread_vote(thread_id: str, user_id: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Deletes the vote for a thread.
 
@@ -134,9 +124,7 @@ def delete_thread_vote(
     return _prepare_thread_response(deleted_thread, user, backend)
 
 
-def _get_comment_and_user(
-    comment_id: str, user_id: str, backend: Any
-) -> tuple[dict[str, Any], dict[str, Any]]:
+def _get_comment_and_user(comment_id: str, user_id: str, backend: Any) -> tuple[dict[str, Any], dict[str, Any]]:
     """
     Fetches the comment and user based on provided IDs.
 
@@ -161,9 +149,7 @@ def _get_comment_and_user(
     return comment, user
 
 
-def _prepare_comment_response(
-    comment: dict[str, Any], user: dict[str, Any], backend: Any
-) -> dict[str, Any]:
+def _prepare_comment_response(comment: dict[str, Any], user: dict[str, Any], backend: Any) -> dict[str, Any]:
     """
     Prepares the serialized response data after voting.
 
@@ -191,9 +177,7 @@ def _prepare_comment_response(
     return serializer.data
 
 
-def update_comment_votes(
-    comment_id: str, user_id: str, value: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def update_comment_votes(comment_id: str, user_id: str, value: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Updates the votes for a comment.
 
@@ -217,9 +201,7 @@ def update_comment_votes(
     if vote_serializer.data["value"] == "up":
         is_updated = backend.upvote_content(comment_id, user_id, entity_type="Comment")
     else:
-        is_updated = backend.downvote_content(
-            comment_id, user_id, entity_type="Comment"
-        )
+        is_updated = backend.downvote_content(comment_id, user_id, entity_type="Comment")
 
     updated_comment = None
     if is_updated:
@@ -231,9 +213,7 @@ def update_comment_votes(
     return _prepare_comment_response(updated_comment, user, backend)
 
 
-def delete_comment_vote(
-    comment_id: str, user_id: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def delete_comment_vote(comment_id: str, user_id: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Deletes the vote for a comment.
 

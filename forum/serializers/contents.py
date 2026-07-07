@@ -67,15 +67,11 @@ class ContentSerializer(serializers.Serializer[dict[str, Any]]):
     at_position_list = serializers.ListField(default=[])
     user_id = serializers.CharField(source="author_id")
     username = serializers.CharField(source="author_username", allow_null=True)
-    author = serializers.CharField(
-        source="author_username", allow_null=True, required=False
-    )
+    author = serializers.CharField(source="author_username", allow_null=True, required=False)
     commentable_id = serializers.CharField(default="course")
     votes = VoteSummarySerializer()
     abuse_flaggers = serializers.ListField(child=serializers.CharField(), default=[])
-    historical_abuse_flaggers = serializers.ListField(
-        child=serializers.CharField(), default=[]
-    )
+    historical_abuse_flaggers = serializers.ListField(child=serializers.CharField(), default=[])
     edit_history = EditHistorySerializer(default=[], many=True)
     closed = serializers.BooleanField(default=False)
     type = serializers.CharField()

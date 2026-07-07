@@ -2,22 +2,22 @@
 API for subscriptions.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from django.http import QueryDict
 from rest_framework.request import Request
 from rest_framework.test import APIRequestFactory
 
 from forum.backend import get_backend
+from forum.constants import FORUM_DEFAULT_PAGE, FORUM_DEFAULT_PER_PAGE
 from forum.pagination import ForumPagination
 from forum.serializers.subscriptions import SubscriptionSerializer
 from forum.serializers.thread import ThreadSerializer
 from forum.utils import ForumV2RequestError
-from forum.constants import FORUM_DEFAULT_PAGE, FORUM_DEFAULT_PER_PAGE
 
 
 def validate_user_and_thread(
-    user_id: str, source_id: str, course_id: Optional[str] = None
+    user_id: str, source_id: str, course_id: str | None = None
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """
     Validate if user and thread exist.
@@ -30,33 +30,25 @@ def validate_user_and_thread(
     return user, thread
 
 
-def create_subscription(
-    user_id: str, source_id: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def create_subscription(user_id: str, source_id: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Create a subscription for a user.
     """
     backend = get_backend(course_id)()
     _, _ = validate_user_and_thread(user_id, source_id, course_id=course_id)
-    subscription = backend.subscribe_user(
-        user_id, source_id, source_type="CommentThread"
-    )
+    subscription = backend.subscribe_user(user_id, source_id, source_type="CommentThread")
     serializer = SubscriptionSerializer(subscription)
     return serializer.data
 
 
-def delete_subscription(
-    user_id: str, source_id: str, course_id: Optional[str] = None
-) -> dict[str, Any]:
+def delete_subscription(user_id: str, source_id: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Delete a subscription for a user.
     """
     backend = get_backend(course_id)()
     _, _ = validate_user_and_thread(user_id, source_id, course_id=course_id)
 
-    subscription = backend.get_subscription(
-        user_id, source_id, source_type="CommentThread"
-    )
+    subscription = backend.get_subscription(user_id, source_id, source_type="CommentThread")
     if not subscription:
         raise ForumV2RequestError("Subscription doesn't exist")
 
@@ -68,18 +60,18 @@ def delete_subscription(
 def get_user_subscriptions(
     user_id: str,
     course_id: str,
-    author_id: Optional[str] = None,
-    thread_type: Optional[str] = None,
-    flagged: Optional[bool] = False,
-    unread: Optional[bool] = False,
-    unanswered: Optional[bool] = False,
-    unresponded: Optional[bool] = False,
-    count_flagged: Optional[bool] = False,
-    sort_key: Optional[str] = "date",
-    page: Optional[int] = FORUM_DEFAULT_PAGE,
-    per_page: Optional[int] = FORUM_DEFAULT_PER_PAGE,
-    group_id: Optional[str] = None,
-    group_ids: Optional[str] = None,
+    author_id: str | None = None,
+    thread_type: str | None = None,
+    flagged: bool | None = False,
+    unread: bool | None = False,
+    unanswered: bool | None = False,
+    unresponded: bool | None = False,
+    count_flagged: bool | None = False,
+    sort_key: str | None = "date",
+    page: int | None = FORUM_DEFAULT_PAGE,
+    per_page: int | None = FORUM_DEFAULT_PER_PAGE,
+    group_id: str | None = None,
+    group_ids: str | None = None,
 ) -> dict[str, Any]:
     """
     Get a user's subscriptions.
@@ -108,7 +100,7 @@ def get_user_subscriptions(
 
 
 def get_thread_subscriptions(
-    thread_id: str, page: int = 1, per_page: int = 20, course_id: Optional[str] = None
+    thread_id: str, page: int = 1, per_page: int = 20, course_id: str | None = None
 ) -> dict[str, Any]:
     """
     Retrieve subscriptions to a specific thread.
@@ -132,9 +124,7 @@ def get_thread_subscriptions(
     drf_request = Request(request)
 
     paginator = ForumPagination()
-    paginated_subscriptions = paginator.paginate_queryset(
-        subscriptions_list, drf_request
-    )
+    paginated_subscriptions = paginator.paginate_queryset(subscriptions_list, drf_request)
 
     subscriptions = SubscriptionSerializer(paginated_subscriptions, many=True)
     subscriptions_count = len(subscriptions.data)

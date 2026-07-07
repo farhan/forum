@@ -1,6 +1,7 @@
 """Tests for subscription apis."""
 
 from typing import Any
+
 import pytest
 
 from test_utils.client import APIClient
@@ -8,9 +9,7 @@ from test_utils.client import APIClient
 pytestmark = pytest.mark.django_db
 
 
-def test_get_subscribed_threads(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_subscribed_threads(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test getting subscribed threads for a user.
     """
@@ -31,18 +30,14 @@ def test_get_subscribed_threads(
         }
     )
     backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?course_id={course_id}"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?course_id={course_id}")
     assert response.status_code == 200
     threads = response.json()["collection"]
     assert len(threads) == 1
     assert threads[0]["id"] == comment_thread_id
 
 
-def test_get_subscribed_threads_with_filters(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_subscribed_threads_with_filters(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test getting subscribed threads for a user with filters.
     """
@@ -62,17 +57,13 @@ def test_get_subscribed_threads_with_filters(
     )
     backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
 
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?flagged=true&course_id={course_id}"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?flagged=true&course_id={course_id}")
     assert response.status_code == 200
     threads = response.json()["collection"]
     assert len(threads) == 0
 
     backend.update_thread(comment_thread_id, abuse_flaggers=[user_id])
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?flagged=true&course_id={course_id}"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?flagged=true&course_id={course_id}")
     assert response.status_code == 200
     threads = response.json()["collection"]
     assert len(threads) == 1
@@ -105,9 +96,7 @@ def test_subscribe_thread(api_client: APIClient, patched_get_backend: Any) -> No
         data={"source_type": "thread", "source_id": comment_thread_id},
     )
     assert response.status_code == 200
-    subscription = backend.subscribe_user(
-        user_id, comment_thread_id, source_type="CommentThread"
-    )
+    subscription = backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
     assert subscription is not None
 
 
@@ -134,22 +123,16 @@ def test_unsubscribe_thread(api_client: APIClient, patched_get_backend: Any) -> 
     )
     backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
 
-    response = api_client.delete(
-        f"/api/v2/users/{user_id}/subscriptions?source_id={comment_thread_id}"
-    )
+    response = api_client.delete(f"/api/v2/users/{user_id}/subscriptions?source_id={comment_thread_id}")
     assert response.status_code == 200
     assert backend.get_subscription(user_id, comment_thread_id) is None
 
     # Attempt to unsubscribe from a thread that the user is not subscribed to
-    response = api_client.delete(
-        f"/api/v2/users/{user_id}/subscriptions?source_id={comment_thread_id}"
-    )
+    response = api_client.delete(f"/api/v2/users/{user_id}/subscriptions?source_id={comment_thread_id}")
     assert response.status_code == 400
 
 
-def test_get_subscribed_threads_with_pagination(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_subscribed_threads_with_pagination(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test getting subscribed threads for a user with pagination.
     """
@@ -196,9 +179,7 @@ def test_get_subscribed_threads_with_pagination(
     backend.subscribe_user(user_id, comment_thread_id_2, source_type="CommentThread")
     backend.subscribe_user(user_id, comment_thread_id_3, source_type="CommentThread")
 
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?page=1&per_page=2&course_id={course_id}"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?page=1&per_page=2&course_id={course_id}")
     assert response.status_code == 200
     threads = response.json()["collection"]
     assert len(threads) == 2
@@ -208,9 +189,7 @@ def test_get_subscribed_threads_with_pagination(
         comment_thread_id_3,
     ]
 
-    response = api_client.get(
-        f"/api/v2/users/{user_id}/subscribed_threads?page=2&per_page=2&course_id={course_id}"
-    )
+    response = api_client.get(f"/api/v2/users/{user_id}/subscribed_threads?page=2&per_page=2&course_id={course_id}")
     assert response.status_code == 200
     threads = response.json()["collection"]
     assert len(threads) == 1
@@ -221,9 +200,7 @@ def test_get_subscribed_threads_with_pagination(
     ]
 
 
-def test_get_thread_subscriptions(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_thread_subscriptions(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test getting subscriptions of a thread.
     """
@@ -244,30 +221,22 @@ def test_get_thread_subscriptions(
             "author_username": author_username,
         }
     )
-    subscription = backend.subscribe_user(
-        user_id, comment_thread_id, source_type="CommentThread"
-    )
+    subscription = backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
     assert subscription
 
-    response = api_client.get(
-        f"/api/v2/threads/{comment_thread_id}/subscriptions?page=1"
-    )
+    response = api_client.get(f"/api/v2/threads/{comment_thread_id}/subscriptions?page=1")
     assert response.status_code == 200
     subscriptions = response.json()["collection"]
     assert len(subscriptions) == 1
     assert subscriptions[0]["id"] == subscription["_id"]
 
-    response = api_client.get(
-        f"/api/v2/threads/{comment_thread_id}/subscriptions?page=2"
-    )
+    response = api_client.get(f"/api/v2/threads/{comment_thread_id}/subscriptions?page=2")
     assert response.status_code == 200
     subscriptions = response.json()["collection"]
     assert len(subscriptions) == 0
 
 
-def test_get_thread_subscriptions_with_pagination(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_thread_subscriptions_with_pagination(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test getting subscriptions of a thread with pagination.
     """
@@ -291,27 +260,21 @@ def test_get_thread_subscriptions_with_pagination(
         backend.find_or_create_user(user_id, username=f"user{user_id}")
         backend.subscribe_user(user_id, comment_thread_id, source_type="CommentThread")
 
-    response = api_client.get(
-        f"/api/v2/threads/{comment_thread_id}/subscriptions?page=1&per_page=2"
-    )
+    response = api_client.get(f"/api/v2/threads/{comment_thread_id}/subscriptions?page=1&per_page=2")
     assert response.status_code == 200
     subscriptions = response.json()["collection"]
     assert len(subscriptions) == 2
     assert subscriptions[0]["subscriber_id"] == user_ids[0]
     assert subscriptions[1]["subscriber_id"] == user_ids[1]
 
-    response = api_client.get(
-        f"/api/v2/threads/{comment_thread_id}/subscriptions?page=2&per_page=2"
-    )
+    response = api_client.get(f"/api/v2/threads/{comment_thread_id}/subscriptions?page=2&per_page=2")
     assert response.status_code == 200
     subscriptions = response.json()["collection"]
     assert len(subscriptions) == 2
     assert subscriptions[0]["subscriber_id"] == user_ids[2]
     assert subscriptions[1]["subscriber_id"] == user_ids[3]
 
-    response = api_client.get(
-        f"/api/v2/threads/{comment_thread_id}/subscriptions?page=3&per_page=2"
-    )
+    response = api_client.get(f"/api/v2/threads/{comment_thread_id}/subscriptions?page=3&per_page=2")
     assert response.status_code == 200
     subscriptions = response.json()["collection"]
     assert len(subscriptions) == 1

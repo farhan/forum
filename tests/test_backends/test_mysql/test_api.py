@@ -58,12 +58,7 @@ def test_un_flag_as_abuse_success() -> None:
 
     assert user.pk not in comment_thread.abuse_flaggers
     assert un_flagged_entity["_id"] == str(comment_thread.pk)
-    assert (
-        AbuseFlagger.objects.filter(
-            user=user, content_object_id=comment_thread.pk
-        ).count()
-        == 0
-    )
+    assert AbuseFlagger.objects.filter(user=user, content_object_id=comment_thread.pk).count() == 0
 
 
 @pytest.mark.django_db
@@ -128,9 +123,7 @@ def test_update_stats_for_course_updates_existing_stat() -> None:
     )
     AbuseFlagger.objects.create(user=user, content=comment_thread)
     AbuseFlagger.objects.create(user=user_2, content=comment_thread_2)
-    course_stat = CourseStat.objects.create(
-        user=user, course_id=course_id, active_flags=2
-    )
+    course_stat = CourseStat.objects.create(user=user, course_id=course_id, active_flags=2)
 
     backend.update_stats_for_course(str(user.pk), course_id, active_flags=2, threads=2)
 
@@ -153,9 +146,7 @@ def test_update_stats_for_course_ignores_invalid_keys() -> None:
         context="course",
     )
     AbuseFlagger.objects.create(user=user, content=comment_thread)
-    course_stat = CourseStat.objects.create(
-        user=user, course_id=course_id, active_flags=1
-    )
+    course_stat = CourseStat.objects.create(user=user, course_id=course_id, active_flags=1)
 
     # Update stats with an invalid key
     backend.update_stats_for_course(str(user.pk), course_id, invalid_key=10)

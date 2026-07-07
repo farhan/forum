@@ -15,9 +15,7 @@ class APIClient(Client):
     This client sends JSON data with the correct headers.
     """
 
-    def send_request(
-        self, method: str, path: str, data: Any, *args: Any, **kwargs: Any
-    ) -> Any:
+    def send_request(self, method: str, path: str, data: Any, *args: Any, **kwargs: Any) -> Any:
         """
         Send a request with the specified HTTP method and JSON data.
 

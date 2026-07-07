@@ -1,22 +1,18 @@
 """Forum backend interface class."""
 
-from typing import Any, Optional
+from typing import Any
 
 
 class AbstractBackend:
     """Abstract backend interface class."""
 
     @classmethod
-    def update_stats_for_course(
-        cls, user_id: str, course_id: str, **kwargs: Any
-    ) -> None:
+    def update_stats_for_course(cls, user_id: str, course_id: str, **kwargs: Any) -> None:
         """Update statistics for a course."""
         raise NotImplementedError
 
     @classmethod
-    def flag_as_abuse(
-        cls, user_id: str, entity_id: str, **kwargs: Any
-    ) -> dict[str, Any]:
+    def flag_as_abuse(cls, user_id: str, entity_id: str, **kwargs: Any) -> dict[str, Any]:
         """Flag an entity as abuse."""
         raise NotImplementedError
 
@@ -28,9 +24,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @classmethod
-    def un_flag_as_abuse(
-        cls, user_id: str, entity_id: str, **kwargs: Any
-    ) -> dict[str, Any]:
+    def un_flag_as_abuse(cls, user_id: str, entity_id: str, **kwargs: Any) -> dict[str, Any]:
         """Unflag an entity as abuse."""
         raise NotImplementedError
 
@@ -41,11 +35,7 @@ class AbstractBackend:
 
     @staticmethod
     def update_vote(
-        content_id: str,
-        user_id: str,
-        vote_type: str = "",
-        is_deleted: bool = False,
-        **kwargs: Any
+        content_id: str, user_id: str, vote_type: str = "", is_deleted: bool = False, **kwargs: Any
     ) -> bool:
         """Update vote for a content."""
         raise NotImplementedError
@@ -66,9 +56,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def validate_thread_and_user(
-        user_id: str, thread_id: str
-    ) -> tuple[dict[str, Any], dict[str, Any]]:
+    def validate_thread_and_user(user_id: str, thread_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
         """Validate a thread and user."""
         raise NotImplementedError
 
@@ -97,9 +85,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def get_read_states(
-        thread_ids: list[str], user_id: str, course_id: str
-    ) -> dict[str, list[Any]]:
+    def get_read_states(thread_ids: list[str], user_id: str, course_id: str) -> dict[str, list[Any]]:
         """Get read states."""
         raise NotImplementedError
 
@@ -109,9 +95,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def get_user_read_state_by_course_id(
-        user_id: str, course_id: str
-    ) -> dict[str, Any]:
+    def get_user_read_state_by_course_id(user_id: str, course_id: str) -> dict[str, Any]:
         """Get user read state by course id."""
         raise NotImplementedError
 
@@ -122,8 +106,8 @@ class AbstractBackend:
         user_id: str,
         course_id: str,
         group_ids: list[int],
-        author_id: Optional[str],
-        thread_type: Optional[str],
+        author_id: str | None,
+        thread_type: str | None,
         filter_flagged: bool,
         filter_unread: bool,
         filter_unanswered: bool,
@@ -134,7 +118,7 @@ class AbstractBackend:
         per_page: int,
         context: str = "course",
         raw_query: bool = False,
-        commentable_ids: Optional[list[str]] = None,
+        commentable_ids: list[str] | None = None,
         is_moderator: bool = False,
     ) -> dict[str, Any]:
         """Handle threads query."""
@@ -163,7 +147,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def get_username_from_id(user_id: str) -> Optional[str]:
+    def get_username_from_id(user_id: str) -> str | None:
         """Get username from id."""
         raise NotImplementedError
 
@@ -173,16 +157,12 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def find_subscribed_threads(
-        user_id: str, course_id: Optional[str] = None
-    ) -> list[str]:
+    def find_subscribed_threads(user_id: str, course_id: str | None = None) -> list[str]:
         """Find subscribed threads."""
         raise NotImplementedError
 
     @staticmethod
-    def subscribe_user(
-        user_id: str, source_id: str, source_type: str
-    ) -> dict[str, Any] | None:
+    def subscribe_user(user_id: str, source_id: str, source_type: str) -> dict[str, Any] | None:
         """Subscribe user."""
         raise NotImplementedError
 
@@ -202,7 +182,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def validate_params(params: dict[str, Any], user_id: Optional[str] = None) -> Any:
+    def validate_params(params: dict[str, Any], user_id: str | None = None) -> Any:
         """Validate params."""
         raise NotImplementedError
 
@@ -233,9 +213,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @classmethod
-    def user_to_hash(
-        cls, user_id: str, params: Optional[dict[str, Any]] = None
-    ) -> dict[str, Any]:
+    def user_to_hash(cls, user_id: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         """User to hash."""
         raise NotImplementedError
 
@@ -290,9 +268,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def find_or_create_user(
-        user_id: str, username: Optional[str] = "", default_sort_key: Optional[str] = ""
-    ) -> str:
+    def find_or_create_user(user_id: str, username: str | None = "", default_sort_key: str | None = "") -> str:
         """Find or create user."""
         raise NotImplementedError
 
@@ -342,9 +318,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def get_subscription(
-        subscriber_id: str, source_id: str, **kwargs: Any
-    ) -> dict[str, Any] | None:
+    def get_subscription(subscriber_id: str, source_id: str, **kwargs: Any) -> dict[str, Any] | None:
         """Get subscription."""
         raise NotImplementedError
 
@@ -369,9 +343,7 @@ class AbstractBackend:
         raise NotImplementedError
 
     @staticmethod
-    def get_filtered_threads(
-        query: dict[str, Any], ids_only: bool = False
-    ) -> list[dict[str, Any]]:
+    def get_filtered_threads(query: dict[str, Any], ids_only: bool = False) -> list[dict[str, Any]]:
         """Get filtered threads."""
         raise NotImplementedError
 
@@ -390,16 +362,16 @@ class AbstractBackend:
     @staticmethod
     def update_comment_and_get_updated_comment(
         comment_id: str,
-        body: Optional[str] = None,
-        course_id: Optional[str] = None,
-        user_id: Optional[str] = None,
-        anonymous: Optional[bool] = False,
-        anonymous_to_peers: Optional[bool] = False,
-        endorsed: Optional[bool] = False,
-        closed: Optional[bool] = False,
-        editing_user_id: Optional[str] = None,
-        edit_reason_code: Optional[str] = None,
-        endorsement_user_id: Optional[str] = None,
+        body: str | None = None,
+        course_id: str | None = None,
+        user_id: str | None = None,
+        anonymous: bool | None = False,
+        anonymous_to_peers: bool | None = False,
+        endorsed: bool | None = False,
+        closed: bool | None = False,
+        editing_user_id: str | None = None,
+        edit_reason_code: str | None = None,
+        endorsement_user_id: str | None = None,
     ) -> dict[str, Any] | None:
         """Update comment and get updated comment."""
         raise NotImplementedError
@@ -455,7 +427,7 @@ class AbstractBackend:
         return votes
 
     @staticmethod
-    def find_thread(**kwargs: Any) -> Optional[dict[str, Any]]:
+    def find_thread(**kwargs: Any) -> dict[str, Any] | None:
         """
         Retrieves a first matching thread from the database.
         """
@@ -464,7 +436,7 @@ class AbstractBackend:
     @staticmethod
     def find_comment(
         is_parent_comment: bool = True, with_abuse_flaggers: bool = False, **kwargs: Any
-    ) -> Optional[dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Retrieves a first matching comment from the database.
         """

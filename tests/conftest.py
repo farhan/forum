@@ -2,7 +2,8 @@
 Init file for tests.
 """
 
-from typing import Any, Generator
+from collections.abc import Generator
+from typing import Any
 from unittest.mock import patch
 
 import mongomock
@@ -13,8 +14,8 @@ from pymongo.database import Database
 from forum.backends.mysql.api import MySQLBackend
 from test_utils.client import APIClient
 from test_utils.mock_es_backend import (
-    MockElasticsearchIndexBackend,
     MockElasticsearchDocumentBackend,
+    MockElasticsearchIndexBackend,
 )
 
 

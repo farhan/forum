@@ -35,9 +35,7 @@ class CommentFlagAPIView(APIView):
         update_all = str_to_bool(request_data.get("all", False))
         user_id = request_data.get("user_id")
         try:
-            serializer_data = update_comment_flag(
-                comment_id, action, user_id, update_all
-            )
+            serializer_data = update_comment_flag(comment_id, action, user_id, update_all)
             return Response(serializer_data, status=status.HTTP_200_OK)
         except ForumV2RequestError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

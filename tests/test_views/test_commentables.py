@@ -1,9 +1,8 @@
 """Test commentables count api endpoint."""
 
-from typing import Any
-
 import random
 import uuid
+from typing import Any
 
 import pytest
 
@@ -12,9 +11,7 @@ from test_utils.client import APIClient
 pytestmark = pytest.mark.django_db
 
 
-def test_get_commentables_counts_api(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_get_commentables_counts_api(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test retrieving counts of discussion and question threads for multiple commentables within a course.
     """

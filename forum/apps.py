@@ -33,4 +33,4 @@ class ForumConfig(AppConfig):
         """
         Import Signals.
         """
-        import forum.signals  # pylint: disable=import-outside-toplevel, unused-import
+        import forum.signals  # noqa: F401

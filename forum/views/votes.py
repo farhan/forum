@@ -53,9 +53,7 @@ class ThreadVoteView(APIView):
             Response: The HTTP response with the result of the vote operation.
         """
         try:
-            thread_response = update_thread_votes(
-                thread_id, request.data["user_id"], request.data["value"]
-            )
+            thread_response = update_thread_votes(thread_id, request.data["user_id"], request.data["value"])
         except (ForumV2RequestError, KeyError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -118,9 +116,7 @@ class CommentVoteView(APIView):
             Response: The HTTP response with the result of the vote operation.
         """
         try:
-            comment_response = update_comment_votes(
-                comment_id, request.data["user_id"], request.data["value"]
-            )
+            comment_response = update_comment_votes(comment_id, request.data["user_id"], request.data["value"])
         except (ForumV2RequestError, KeyError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

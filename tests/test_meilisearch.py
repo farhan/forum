@@ -2,9 +2,10 @@
 Unit tests for the meilisearch search backend.
 """
 
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 import search.meilisearch as m
+
 from forum.search import meilisearch
 
 TEST_ID = "abcd"
@@ -32,9 +33,7 @@ def test_create_document() -> None:
     assert {
         "id": TEST_ID,
         m.PRIMARY_KEY_FIELD_NAME: TEST_PK,
-    } == meilisearch.create_document(
-        {"field_should_not_be_here": "some_value"}, TEST_ID
-    )
+    } == meilisearch.create_document({"field_should_not_be_here": "some_value"}, TEST_ID)
 
     assert {
         "id": TEST_ID,
@@ -45,9 +44,7 @@ def test_create_document() -> None:
 
 def test_index_document() -> None:
     backend = meilisearch.MeilisearchDocumentBackend()
-    with patch.object(
-        backend, "get_index", return_value=Mock(add_documents=Mock())
-    ) as mock_get_index:
+    with patch.object(backend, "get_index", return_value=Mock(add_documents=Mock())) as mock_get_index:
         backend.index_document(
             "my_index",
             TEST_ID,
@@ -70,9 +67,7 @@ def test_index_document() -> None:
 
 def test_delete_document() -> None:
     backend = meilisearch.MeilisearchDocumentBackend()
-    with patch.object(
-        backend, "get_index", return_value=Mock(add_documents=Mock())
-    ) as mock_get_index:
+    with patch.object(backend, "get_index", return_value=Mock(add_documents=Mock())) as mock_get_index:
         backend.delete_document("my_index", TEST_ID)
         mock_get_index.assert_called_once_with("my_index")
         mock_get_index().delete_document.assert_called_once_with(TEST_PK)

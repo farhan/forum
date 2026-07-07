@@ -2,7 +2,7 @@
 API for search.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from forum.backend import get_backend
 from forum.constants import FORUM_DEFAULT_PAGE, FORUM_DEFAULT_PER_PAGE
@@ -14,9 +14,9 @@ def _get_thread_ids_from_indexes(
     context: str,
     group_ids: list[int],
     text: str,
-    commentable_ids: Optional[list[str]] = None,
-    course_id: Optional[str] = None,
-) -> tuple[list[str], Optional[str]]:
+    commentable_ids: list[str] | None = None,
+    course_id: str | None = None,
+) -> tuple[list[str], str | None]:
     """
     Retrieve thread IDs based on the search text and suggested corrections if necessary.
 
@@ -31,7 +31,7 @@ def _get_thread_ids_from_indexes(
             - A list of thread IDs that match the search criteria.
             - A suggested correction for the search text, or None if no correction is found.
     """
-    corrected_text: Optional[str] = None
+    corrected_text: str | None = None
     thread_search = get_thread_search_backend()
 
     thread_ids = thread_search.get_thread_ids(
@@ -61,10 +61,10 @@ def search_threads(
     text: str,
     user_id: str,
     course_id: str,
-    group_ids: Optional[list[int]] = None,
-    commentable_ids: Optional[list[str]] = None,
-    author_id: Optional[str] = None,
-    thread_type: Optional[str] = None,
+    group_ids: list[int] | None = None,
+    commentable_ids: list[str] | None = None,
+    author_id: str | None = None,
+    thread_type: str | None = None,
     sort_key: str = "date",
     context: str = "course",
     flagged: bool = False,
@@ -82,9 +82,7 @@ def search_threads(
     group_ids = group_ids or []
     commentable_ids = commentable_ids or []
 
-    thread_ids, corrected_text = _get_thread_ids_from_indexes(
-        context, group_ids, text, commentable_ids, course_id
-    )
+    thread_ids, corrected_text = _get_thread_ids_from_indexes(context, group_ids, text, commentable_ids, course_id)
 
     backend = get_backend(course_id)()
 

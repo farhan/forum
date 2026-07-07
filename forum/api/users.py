@@ -4,7 +4,7 @@ Native Python Users APIs.
 
 import logging
 import math
-from typing import Any, Optional
+from typing import Any
 
 from forum.backend import get_backend
 from forum.constants import FORUM_DEFAULT_PAGE, FORUM_DEFAULT_PER_PAGE
@@ -17,9 +17,9 @@ log = logging.getLogger(__name__)
 
 def get_user(
     user_id: str,
-    group_ids: Optional[list[int]] = None,
-    course_id: Optional[str] = None,
-    complete: Optional[bool] = False,
+    group_ids: list[int] | None = None,
+    course_id: str | None = None,
+    complete: bool | None = False,
 ) -> dict[str, Any]:
     """Get user data by user_id."""
     """
@@ -48,11 +48,11 @@ def get_user(
 
 def update_user(
     user_id: str,
-    username: Optional[str] = None,
-    default_sort_key: Optional[str] = None,
-    course_id: Optional[str] = None,
-    group_ids: Optional[list[int]] = None,
-    complete: Optional[bool] = False,
+    username: str | None = None,
+    default_sort_key: str | None = None,
+    course_id: str | None = None,
+    group_ids: list[int] | None = None,
+    complete: bool | None = False,
 ) -> dict[str, Any]:
     """Update user."""
     backend = get_backend(course_id)()
@@ -86,8 +86,8 @@ def create_user(
     user_id: str,
     username: str,
     default_sort_key: str = "date",
-    course_id: Optional[str] = None,
-    group_ids: Optional[list[int]] = None,
+    course_id: str | None = None,
+    group_ids: list[int] | None = None,
     complete: bool = False,
 ) -> dict[str, Any]:
     """Create user."""
@@ -98,9 +98,7 @@ def create_user(
     if user_by_id or user_by_username:
         raise ForumV2RequestError(f"user already exists with id: {id}")
 
-    backend.find_or_create_user(
-        user_id, username=username, default_sort_key=default_sort_key
-    )
+    backend.find_or_create_user(user_id, username=username, default_sort_key=default_sort_key)
     user = backend.get_user(user_id)
     if not user:
         raise ForumV2RequestError(f"user not found with id: {user_id}")
@@ -114,9 +112,7 @@ def create_user(
     return serializer.data
 
 
-def update_username(
-    user_id: str, new_username: str, course_id: Optional[str] = None
-) -> dict[str, str]:
+def update_username(user_id: str, new_username: str, course_id: str | None = None) -> dict[str, str]:
     """Update username."""
     backend = get_backend(course_id)()
     user = backend.get_user(user_id)
@@ -127,9 +123,7 @@ def update_username(
     return {"message": "Username updated successfully"}
 
 
-def retire_user(
-    user_id: str, retired_username: str, course_id: Optional[str] = None
-) -> dict[str, str]:
+def retire_user(user_id: str, retired_username: str, course_id: str | None = None) -> dict[str, str]:
     """Retire user."""
     backend = get_backend(course_id)()
     user = backend.get_user(user_id)
@@ -153,8 +147,8 @@ def mark_thread_as_read(
     user_id: str,
     source_id: str,
     complete: bool = False,
-    course_id: Optional[str] = None,
-    group_ids: Optional[list[int]] = None,
+    course_id: str | None = None,
+    group_ids: list[int] | None = None,
 ) -> dict[str, Any]:
     """Mark thread as read."""
     backend = get_backend(course_id)()
@@ -186,18 +180,18 @@ def mark_thread_as_read(
 def get_user_active_threads(
     user_id: str,
     course_id: str,
-    author_id: Optional[str] = None,
-    thread_type: Optional[str] = None,
-    flagged: Optional[bool] = False,
-    unread: Optional[bool] = False,
-    unanswered: Optional[bool] = False,
-    unresponded: Optional[bool] = False,
-    count_flagged: Optional[bool] = False,
-    sort_key: Optional[str] = "user_activity",
-    page: Optional[int] = FORUM_DEFAULT_PAGE,
-    per_page: Optional[int] = FORUM_DEFAULT_PER_PAGE,
-    group_id: Optional[str] = None,
-    is_moderator: Optional[bool] = False,
+    author_id: str | None = None,
+    thread_type: str | None = None,
+    flagged: bool | None = False,
+    unread: bool | None = False,
+    unanswered: bool | None = False,
+    unresponded: bool | None = False,
+    count_flagged: bool | None = False,
+    sort_key: str | None = "user_activity",
+    page: int | None = FORUM_DEFAULT_PAGE,
+    per_page: int | None = FORUM_DEFAULT_PER_PAGE,
+    group_id: str | None = None,
+    is_moderator: bool | None = False,
 ) -> dict[str, Any]:
     """Get user active threads."""
     backend = get_backend(course_id)()
@@ -215,22 +209,14 @@ def get_user_active_threads(
 
     if flagged:
         active_contents = [
-            content
-            for content in active_contents
-            if content["abuse_flaggers"] and len(content["abuse_flaggers"]) > 0
+            content for content in active_contents if content["abuse_flaggers"] and len(content["abuse_flaggers"]) > 0
         ]
-    active_contents = sorted(
-        active_contents, key=lambda x: x["updated_at"], reverse=True
-    )
+    active_contents = sorted(active_contents, key=lambda x: x["updated_at"], reverse=True)
     active_thread_ids = list(
-        set(
-            (
-                content["comment_thread_id"]
-                if content["_type"] == "Comment"
-                else content["_id"]
-            )
+        {
+            (content["comment_thread_id"] if content["_type"] == "Comment" else content["_id"])
             for content in active_contents
-        )
+        }
     )
 
     params: dict[str, Any] = {
@@ -271,16 +257,12 @@ def get_user_active_threads(
         for thread in collection:
             thread["_id"] = str(thread.pop("_id"))
             thread["type"] = str(thread.get("_type", "")).lower()
-        data["collection"] = ThreadSerializer(
-            collection, many=True, backend=backend
-        ).data
+        data["collection"] = ThreadSerializer(collection, many=True, backend=backend).data
 
     return data
 
 
-def _get_user_data(
-    user_stats: dict[str, Any], exclude_from_stats: list[str]
-) -> dict[str, Any]:
+def _get_user_data(user_stats: dict[str, Any], exclude_from_stats: list[str]) -> dict[str, Any]:
     """Get user data from user stats."""
     user_data = {"username": user_stats["username"]}
     for k, v in user_stats["course_stats"].items():
@@ -289,9 +271,7 @@ def _get_user_data(
     return user_data
 
 
-def _get_stats_for_usernames(
-    course_id: str, usernames: list[str], backend: Any
-) -> list[dict[str, Any]]:
+def _get_stats_for_usernames(course_id: str, usernames: list[str], backend: Any) -> list[dict[str, Any]]:
     """Get stats for specific usernames."""
     users = backend.get_users()
     stats_query = []
@@ -302,16 +282,14 @@ def _get_stats_for_usernames(
         if course_stats:
             for course_stat in course_stats:
                 if course_stat["course_id"] == course_id:
-                    stats_query.append(
-                        {"username": user["username"], "course_stats": course_stat}
-                    )
+                    stats_query.append({"username": user["username"], "course_stats": course_stat})
                     break
     return sorted(stats_query, key=lambda u: usernames.index(u["username"]))
 
 
 def get_user_course_stats(
     course_id: str,
-    usernames: Optional[str] = None,
+    usernames: str | None = None,
     page: int = FORUM_DEFAULT_PAGE,
     per_page: int = FORUM_DEFAULT_PER_PAGE,
     sort_key: str = "",
@@ -328,19 +306,14 @@ def get_user_course_stats(
     data = []
 
     if not usernames_list:
-        paginated_stats = backend.get_paginated_user_stats(
-            course_id, page, per_page, sort_criterion
-        )
+        paginated_stats = backend.get_paginated_user_stats(course_id, page, per_page, sort_criterion)
         num_pages = 0
         page = 0
         total_count = 0
         if paginated_stats.get("pagination"):
             total_count = paginated_stats["pagination"][0]["total_count"]
             num_pages = max(1, math.ceil(total_count / per_page))
-            data = [
-                _get_user_data(user_stats, exclude_from_stats)
-                for user_stats in paginated_stats["data"]
-            ]
+            data = [_get_user_data(user_stats, exclude_from_stats) for user_stats in paginated_stats["data"]]
     else:
         stats_query = _get_stats_for_usernames(course_id, usernames_list, backend)
         total_count = len(stats_query)
@@ -348,11 +321,7 @@ def get_user_course_stats(
         data = [
             {
                 "username": user_stats["username"],
-                **{
-                    k: v
-                    for k, v in user_stats["course_stats"].items()
-                    if k not in exclude_from_stats
-                },
+                **{k: v for k, v in user_stats["course_stats"].items() if k not in exclude_from_stats},
             }
             for user_stats in stats_query
         ]

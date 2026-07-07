@@ -28,9 +28,7 @@ class ForumPagination(PageNumberPagination):
             return self.max_page_size
         return min(int(page_size), self.max_page_size)
 
-    def paginate_queryset(
-        self, queryset: Any, request: Request, view: Any = None
-    ) -> Any:
+    def paginate_queryset(self, queryset: Any, request: Request, view: Any = None) -> Any:
         """
         Paginate the queryset.
 

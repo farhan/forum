@@ -32,21 +32,15 @@ def plugin_settings(settings: Any) -> None:
 
     # Unfortunately we can't copy settings from edx-platform because tutor patches have
     # not been applied yet
-    settings.FORUM_MONGODB_DATABASE = getattr(
-        settings, "FORUM_MONGODB_DATABASE", "cs_comments_service"
-    )
-    settings.FORUM_MONGODB_CLIENT_PARAMETERS = getattr(
-        settings, "FORUM_MONGODB_CLIENT_PARAMETERS", {"host": "mongodb"}
-    )
+    settings.FORUM_MONGODB_DATABASE = getattr(settings, "FORUM_MONGODB_DATABASE", "cs_comments_service")
+    settings.FORUM_MONGODB_CLIENT_PARAMETERS = getattr(settings, "FORUM_MONGODB_CLIENT_PARAMETERS", {"host": "mongodb"})
 
     # Enable forum service
     if "ENABLE_DISCUSSION_SERVICE" not in settings.FEATURES:
         settings.FEATURES["ENABLE_DISCUSSION_SERVICE"] = True
 
     # URL prefix must match the regex in the url_config of the plugin app
-    settings.COMMENTS_SERVICE_URL = getattr(
-        settings, "COMMENTS_SERVICE_URL", "http://localhost:8000/forum"
-    )
+    settings.COMMENTS_SERVICE_URL = getattr(settings, "COMMENTS_SERVICE_URL", "http://localhost:8000/forum")
 
     # Timezone-awareness is required for mysql fields
     settings.USE_TZ = getattr(settings, "USE_TZ", True)

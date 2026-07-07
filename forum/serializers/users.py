@@ -12,15 +12,9 @@ class UserSerializer(serializers.Serializer[Any]):
     username = serializers.CharField()
     email = serializers.CharField(allow_null=True)
     external_id = serializers.CharField()
-    subscribed_thread_ids = serializers.ListField(
-        child=serializers.CharField(), default=[]
-    )
-    subscribed_commentable_ids = serializers.ListField(
-        child=serializers.CharField(), default=[]
-    )
-    subscribed_user_ids = serializers.ListField(
-        child=serializers.CharField(), default=[]
-    )
+    subscribed_thread_ids = serializers.ListField(child=serializers.CharField(), default=[])
+    subscribed_commentable_ids = serializers.ListField(child=serializers.CharField(), default=[])
+    subscribed_user_ids = serializers.ListField(child=serializers.CharField(), default=[])
     follower_ids = serializers.ListField(child=serializers.CharField(), default=[])
     upvoted_ids = serializers.ListField(child=serializers.CharField(), default=[])
     downvoted_ids = serializers.ListField(child=serializers.CharField(), default=[])

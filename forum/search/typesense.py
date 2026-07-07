@@ -2,16 +2,15 @@
 Typesense backend for searching comments and threads.
 """
 
-from typing import Any, Optional, cast
+from typing import Any, cast
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.paginator import Paginator
-
 from typesense import Client
+from typesense.exceptions import ObjectNotFound
 from typesense.types.collection import CollectionCreateSchema
 from typesense.types.document import DocumentSchema, SearchParameters
-from typesense.exceptions import ObjectNotFound
 
 from forum.backends.mysql.models import Comment, CommentThread
 from forum.constants import FORUM_MAX_DEEP_SEARCH_COMMENT_COUNT
@@ -136,11 +135,7 @@ def document_from_thread(doc_id: str | int, data: dict[str, Any]) -> DocumentSch
         "context": str(data.get("context", "")),
         "text": "{}\n{}".format(
             str(data.get("title", "")),
-            (
-                BeautifulSoup(data["body"], features="html.parser").get_text()
-                if data.get("body")
-                else ""
-            ),
+            (BeautifulSoup(data["body"], features="html.parser").get_text() if data.get("body") else ""),
         ),
     }
 
@@ -156,11 +151,7 @@ def document_from_comment(doc_id: str | int, data: dict[str, Any]) -> DocumentSc
         "course_id": str(data.get("course_id", "")),
         "commentable_id": "",
         "context": str(data.get("context", "")),
-        "text": (
-            BeautifulSoup(data["body"], features="html.parser").get_text()
-            if data.get("body")
-            else ""
-        ),
+        "text": (BeautifulSoup(data["body"], features="html.parser").get_text() if data.get("body") else ""),
     }
 
 
@@ -199,9 +190,7 @@ class TypesenseDocumentBackend(BaseDocumentSearchBackend):
     Document backend implementation for Typesense.
     """
 
-    def index_document(
-        self, index_name: str, doc_id: str | int, document: dict[str, Any]
-    ) -> None:
+    def index_document(self, index_name: str, doc_id: str | int, document: dict[str, Any]) -> None:
         """
         Index a document in Typesense.
         """
@@ -216,9 +205,7 @@ class TypesenseDocumentBackend(BaseDocumentSearchBackend):
 
         client.collections[collection_name()].documents.upsert(typesense_document)
 
-    def update_document(
-        self, index_name: str, doc_id: str | int, update_data: dict[str, Any]
-    ) -> None:
+    def update_document(self, index_name: str, doc_id: str | int, update_data: dict[str, Any]) -> None:
         """
         Same operation as index_document, because upsert is used.
         """
@@ -268,9 +255,7 @@ class TypesenseIndexBackend(BaseIndexSearchBackend):
         if force_new_index or not exists:
             client.collections.create(collection_schema())
 
-    def rebuild_indices(
-        self, batch_size: int = 500, extra_catchup_minutes: int = 5
-    ) -> None:
+    def rebuild_indices(self, batch_size: int = 500, extra_catchup_minutes: int = 5) -> None:
         """
         Reindex everything in Typesense
 
@@ -287,23 +272,14 @@ class TypesenseIndexBackend(BaseIndexSearchBackend):
             (CommentThread, document_from_thread),
             (Comment, document_from_comment),
         ]:
-            paginator = Paginator(
-                model.objects.order_by("pk").all(), per_page=batch_size
-            )
+            paginator = Paginator(model.objects.order_by("pk").all(), per_page=batch_size)
             for page_number in paginator.page_range:
                 page = paginator.get_page(page_number)
-                documents = [
-                    document_builder(obj.pk, obj.doc_to_hash())
-                    for obj in page.object_list
-                ]
+                documents = [document_builder(obj.pk, obj.doc_to_hash()) for obj in page.object_list]
                 if documents:
-                    response = client.collections[collection_name()].documents.import_(
-                        documents, {"action": "upsert"}
-                    )
+                    response = client.collections[collection_name()].documents.import_(documents, {"action": "upsert"})
                     if not all(result["success"] for result in response):
-                        raise ValueError(
-                            f"Errors while importing documents to Typesense collection: {response}"
-                        )
+                        raise ValueError(f"Errors while importing documents to Typesense collection: {response}")
 
     def validate_indices(self) -> None:
         """
@@ -317,18 +293,12 @@ class TypesenseIndexBackend(BaseIndexSearchBackend):
         """
         client = get_typesense_client()
         # cast to a wider type, because we want to use it in a more flexible way than TypedDict normally allows.
-        actual_schema = cast(
-            dict[str, Any], client.collections[collection_name()].retrieve()
-        )
+        actual_schema = cast(dict[str, Any], client.collections[collection_name()].retrieve())
         expected_schema = expected_full_collection_schema()
         errors: list[str] = []
 
-        expected_field_names = set(
-            map(lambda field: field["name"], expected_schema["fields"])
-        )
-        actual_field_names = set(
-            map(lambda field: field["name"], actual_schema["fields"])
-        )
+        expected_field_names = {field["name"] for field in expected_schema["fields"]}
+        actual_field_names = {field["name"] for field in actual_schema["fields"]}
 
         if missing_fields := expected_field_names - actual_field_names:
             errors.append(
@@ -345,6 +315,7 @@ class TypesenseIndexBackend(BaseIndexSearchBackend):
             for expected_field, actual_field in zip(
                 sorted(expected_schema["fields"], key=lambda field: field["name"]),
                 sorted(actual_schema["fields"], key=lambda field: field["name"]),
+                strict=False,
             ):
                 for key, expected_value in expected_field.items():
                     if expected_value != actual_field[key]:
@@ -398,9 +369,9 @@ class TypesenseThreadSearchBackend(BaseThreadSearchBackend):
         group_ids: list[int],
         search_text: str,
         # This parameter is unsupported, but as far as we know it's not used anywhere.
-        sort_criteria: Optional[list[dict[str, str]]] = None,
-        commentable_ids: Optional[list[str]] = None,
-        course_id: Optional[str] = None,
+        sort_criteria: list[dict[str, str]] | None = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[str]:
         """
         Retrieve thread IDs based on search criteria.
@@ -416,11 +387,12 @@ class TypesenseThreadSearchBackend(BaseThreadSearchBackend):
 
         results = client.collections[collection_name()].documents.search(params)
         thread_ids: set[str] = {
-            hit["document"]["thread_id"] for hit in results.get("hits", [])  # type: ignore
+            hit["document"]["thread_id"]  # type: ignore[misc]
+            for hit in results.get("hits", [])
         }
         return list(thread_ids)
 
-    def get_suggested_text(self, search_text: str) -> Optional[str]:
+    def get_suggested_text(self, search_text: str) -> str | None:
         """
         Retrieve text suggestions for a given search query.
 

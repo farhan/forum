@@ -4,8 +4,9 @@ Elasticsearch client utilities.
 
 import logging
 import re
+from collections.abc import Iterator
 from datetime import datetime, timedelta
-from typing import Any, Iterator, Optional
+from typing import Any
 
 from django.conf import settings
 from elasticsearch import Elasticsearch, exceptions, helpers
@@ -26,7 +27,7 @@ class ElasticsearchClientMixin:
     Provide a Elasticsearch client API based on a singleton.
     """
 
-    ELASTIC_SEARCH_INSTANCE: Optional[Elasticsearch] = None
+    ELASTIC_SEARCH_INSTANCE: Elasticsearch | None = None
 
     @property
     def client(self) -> Elasticsearch:
@@ -34,9 +35,7 @@ class ElasticsearchClientMixin:
         Elasticsearch client singleton.
         """
         if self.ELASTIC_SEARCH_INSTANCE is None:
-            self.ELASTIC_SEARCH_INSTANCE = Elasticsearch(
-                settings.FORUM_ELASTIC_SEARCH_CONFIG
-            )
+            self.ELASTIC_SEARCH_INSTANCE = Elasticsearch(settings.FORUM_ELASTIC_SEARCH_CONFIG)
         return self.ELASTIC_SEARCH_INSTANCE
 
 
@@ -70,16 +69,12 @@ class ElasticsearchModelMixin:
         raise Exception("Invalid model name")
 
 
-class ElasticsearchDocumentBackend(
-    base.BaseDocumentSearchBackend, ElasticsearchClientMixin
-):
+class ElasticsearchDocumentBackend(base.BaseDocumentSearchBackend, ElasticsearchClientMixin):
     """
     Elasticsearch-based backend for document management.
     """
 
-    def update_document(
-        self, index_name: str, doc_id: str | int, update_data: dict[str, Any]
-    ) -> None:
+    def update_document(self, index_name: str, doc_id: str | int, update_data: dict[str, Any]) -> None:
         """
         Update a single document in the specified index.
 
@@ -112,9 +107,7 @@ class ElasticsearchDocumentBackend(
         except exceptions.RequestError as e:
             log.error(f"Error deleting document {doc_id} from index {index_name}: {e}")
 
-    def index_document(
-        self, index_name: str, doc_id: str | int, document: dict[str, Any]
-    ) -> None:
+    def index_document(self, index_name: str, doc_id: str | int, document: dict[str, Any]) -> None:
         """
         Index a single document in the specified Elasticsearch index.
 
@@ -130,9 +123,7 @@ class ElasticsearchDocumentBackend(
             log.error(f"Error indexing document {doc_id} in {index_name}: {e}")
 
 
-class ElasticsearchIndexBackend(
-    base.BaseIndexSearchBackend, ElasticsearchModelMixin, ElasticsearchClientMixin
-):
+class ElasticsearchIndexBackend(base.BaseIndexSearchBackend, ElasticsearchModelMixin, ElasticsearchClientMixin):
     """
     Search forum threads.
     """
@@ -186,9 +177,7 @@ class ElasticsearchIndexBackend(
         },
     }
 
-    def rebuild_indices(
-        self, batch_size: int = 500, extra_catchup_minutes: int = 5
-    ) -> None:
+    def rebuild_indices(self, batch_size: int = 500, extra_catchup_minutes: int = 5) -> None:
         """
         Rebuild the indices by creating new indices, importing data, and managing aliases.
 
@@ -203,15 +192,11 @@ class ElasticsearchIndexBackend(
         for index_name in index_names:
             current_batch = 1
             mysql_model = self.get_mysql_model_from_index_name(index_name)
-            for response in self._import_to_es_from_mysql(
-                mysql_model, index_name, batch_size
-            ):
+            for response in self._import_to_es_from_mysql(mysql_model, index_name, batch_size):
                 self.batch_import_post_process(response, current_batch)
                 current_batch += 1
 
-        adjusted_start_time = initial_start_time - timedelta(
-            minutes=extra_catchup_minutes
-        )
+        adjusted_start_time = initial_start_time - timedelta(minutes=extra_catchup_minutes)
         self.catchup_indices(index_names, adjusted_start_time, batch_size)
 
         # Update aliases to point to new indices
@@ -223,9 +208,7 @@ class ElasticsearchIndexBackend(
 
         log.info("Rebuild indices complete.")
 
-    def catchup_indices(
-        self, index_names: list[str], start_time: datetime, batch_size: int = 100
-    ) -> None:
+    def catchup_indices(self, index_names: list[str], start_time: datetime, batch_size: int = 100) -> None:
         """
         Catch up the indices by importing documents updated after the specified start time.
 
@@ -238,9 +221,7 @@ class ElasticsearchIndexBackend(
             current_batch = 1
             mysql_model = self.get_mysql_model_from_index_name(index_name)
             mysql_query: dict[str, Any] = {"updated_at__gte": start_time}
-            for response in self._import_to_es_from_mysql(
-                mysql_model, index_name, batch_size, mysql_query
-            ):
+            for response in self._import_to_es_from_mysql(mysql_model, index_name, batch_size, mysql_query):
                 self.batch_import_post_process(response, current_batch)
                 current_batch += 1
         log.info(f"Catch up from {start_time} complete.")
@@ -286,11 +267,7 @@ class ElasticsearchIndexBackend(
             int: The number of indices deleted.
         """
         # Fetch all indices related to models
-        all_indices = [
-            index
-            for pattern in self.index_names
-            for index in self.client.indices.get(f"{pattern}*")
-        ]
+        all_indices = [index for pattern in self.index_names for index in self.client.indices.get(f"{pattern}*")]
 
         # Determine the latest indices
         latest_indices: dict[str, Any] = {}
@@ -299,25 +276,18 @@ class ElasticsearchIndexBackend(
             match = re.search(r"\d{14}", index_name)
             if match:
                 timestamp = datetime.strptime(match.group(), "%Y%m%d%H%M%S")
-                if (
-                    base_name not in latest_indices
-                    or timestamp > latest_indices[base_name][1]
-                ):
+                if base_name not in latest_indices or timestamp > latest_indices[base_name][1]:
                     latest_indices[base_name] = (index_name, timestamp)
 
         # Delete all indices except the latest ones
-        indices_to_delete = set(all_indices) - {
-            name for name, _ in latest_indices.values()
-        }
+        indices_to_delete = set(all_indices) - {name for name, _ in latest_indices.values()}
         if indices_to_delete:
             self.client.indices.delete(index=",".join(indices_to_delete))
             log.info(f"Deleted unused indices: {indices_to_delete}")
 
         return len(indices_to_delete)
 
-    def batch_import_post_process(
-        self, response: tuple[int, Any], batch_number: int
-    ) -> None:
+    def batch_import_post_process(self, response: tuple[int, Any], batch_number: int) -> None:
         """
         Process the response from a batch import operation.
 
@@ -329,13 +299,9 @@ class ElasticsearchIndexBackend(
         for item in errors:
             if "error" in item["index"]:
                 log.error(f"Error indexing. Response was: {response}")
-        log.info(
-            f"Imported {success_count} documents to the batch {batch_number} into the index"
-        )
+        log.info(f"Imported {success_count} documents to the batch {batch_number} into the index")
 
-    def move_alias(
-        self, alias_name: str, index_name: str, force_delete: bool = False
-    ) -> None:
+    def move_alias(self, alias_name: str, index_name: str, force_delete: bool = False) -> None:
         """
         Move an alias to point to a new index, optionally deleting an existing index with the same name.
 
@@ -348,9 +314,7 @@ class ElasticsearchIndexBackend(
             ValueError: If the alias name matches the index name or if the index doesn't exist.
         """
         if alias_name == index_name:
-            raise ValueError(
-                f"Can't point alias [{alias_name}] to an index of the same name."
-            )
+            raise ValueError(f"Can't point alias [{alias_name}] to an index of the same name.")
         if not self.exists_index(index_name):
             raise ValueError(f"Can't point alias to non-existent index [{index_name}].")
 
@@ -535,14 +499,12 @@ class ElasticsearchIndexBackend(
         return re.sub(r"_\d{14}$", "", index_name)
 
 
-class ElasticsearchThreadSearchBackend(
-    base.BaseThreadSearchBackend, ElasticsearchClientMixin, ElasticsearchModelMixin
-):
+class ElasticsearchThreadSearchBackend(base.BaseThreadSearchBackend, ElasticsearchClientMixin, ElasticsearchModelMixin):
     """
     Base class to perform thread search.
     """
 
-    def get_suggested_text(self, search_text: str) -> Optional[str]:
+    def get_suggested_text(self, search_text: str) -> str | None:
         """
         Retrieve text suggestions for a given search query.
 
@@ -559,24 +521,16 @@ class ElasticsearchThreadSearchBackend(
                 for field in suggestion_fields
             }
         }
-        response: dict[str, Any] = self.client.search(
-            index=self.index_names, body=suggest_body
-        )
-        return self._extract_suggestion(
-            response, [f"{field}_suggestions" for field in suggestion_fields]
-        )
+        response: dict[str, Any] = self.client.search(index=self.index_names, body=suggest_body)
+        return self._extract_suggestion(response, [f"{field}_suggestions" for field in suggestion_fields])
 
     @staticmethod
-    def _extract_suggestion(
-        response: dict[str, Any], suggestion_types: list[str]
-    ) -> Optional[str]:
+    def _extract_suggestion(response: dict[str, Any], suggestion_types: list[str]) -> str | None:
         """
         Extract suggestions from the Elasticsearch response.
         """
         for suggestion_type in suggestion_types:
-            suggestions: list[dict[str, Any]] = response.get("suggest", {}).get(
-                suggestion_type, []
-            )
+            suggestions: list[dict[str, Any]] = response.get("suggest", {}).get(suggestion_type, [])
             options = suggestions and suggestions[0].get("options", [])
             if options:
                 return options[0]["text"]
@@ -585,8 +539,8 @@ class ElasticsearchThreadSearchBackend(
     def build_must_clause(
         self,
         search_text: str,
-        commentable_ids: Optional[list[str]] = None,
-        course_id: Optional[str] = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[dict[str, Any]]:
         """
         Build the 'must' clause for thread-specific Elasticsearch queries based on input parameters.
@@ -616,7 +570,7 @@ class ElasticsearchThreadSearchBackend(
     def build_filter_clause(
         self,
         context: str,
-        group_ids: Optional[list[int]] = None,
+        group_ids: list[int] | None = None,
     ) -> list[dict[str, Any]]:
         """
         Build the 'filter' clause for thread-specific Elasticsearch queries based on context and group parameters.
@@ -653,25 +607,19 @@ class ElasticsearchThreadSearchBackend(
         context: str,
         group_ids: list[int],
         search_text: str,
-        sort_criteria: Optional[list[dict[str, str]]] = None,
-        commentable_ids: Optional[list[str]] = None,
-        course_id: Optional[str] = None,
+        sort_criteria: list[dict[str, str]] | None = None,
+        commentable_ids: list[str] | None = None,
+        course_id: str | None = None,
     ) -> list[str]:
         """
         Retrieve thread IDs based on search criteria.
         """
-        must_clause: list[dict[str, Any]] = self.build_must_clause(
-            search_text, commentable_ids, course_id
-        )
-        filter_clause: list[dict[str, Any]] = self.build_filter_clause(
-            context, group_ids
-        )
+        must_clause: list[dict[str, Any]] = self.build_must_clause(search_text, commentable_ids, course_id)
+        filter_clause: list[dict[str, Any]] = self.build_filter_clause(context, group_ids)
         search_body = {
             "size": FORUM_MAX_DEEP_SEARCH_COMMENT_COUNT,
             "sort": sort_criteria or [{"updated_at": "desc"}],
-            "query": {
-                "bool": {"must": must_clause or [], "should": filter_clause or []}
-            },
+            "query": {"bool": {"must": must_clause or [], "should": filter_clause or []}},
         }
         response = self.client.search(index=self.index_names, body=search_body)
         if response:

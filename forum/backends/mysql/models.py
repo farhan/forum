@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from django.contrib.auth.models import User  # pylint: disable=E5142
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -22,14 +22,10 @@ class ForumUser(models.Model):
     class Meta:
         app_label = "forum"
 
-    user: models.OneToOneField[User, User] = models.OneToOneField(
-        User, related_name="forum", on_delete=models.CASCADE
-    )
-    default_sort_key: models.CharField[str, str] = models.CharField(
-        max_length=25, default="date"
-    )
+    user: models.OneToOneField[User, User] = models.OneToOneField(User, related_name="forum", on_delete=models.CASCADE)
+    default_sort_key: models.CharField[str, str] = models.CharField(max_length=25, default="date")
 
-    def to_dict(self, course_id: Optional[str] = None) -> dict[str, Any]:
+    def to_dict(self, course_id: str | None = None) -> dict[str, Any]:
         """Return a dictionary representation of the model."""
         course_stats = CourseStat.objects.filter(user=self.user)
         read_states = ReadState.objects.filter(user=self.user)
@@ -45,11 +41,7 @@ class ForumUser(models.Model):
             "external_id": self.user.pk,
             "username": self.user.username,
             "email": self.user.email,
-            "course_stats": (
-                course_stat.to_dict()
-                if course_stat
-                else [stat.to_dict() for stat in course_stats]
-            ),
+            "course_stats": (course_stat.to_dict() if course_stat else [stat.to_dict() for stat in course_stats]),
             "read_states": [state.to_dict() for state in read_states],
         }
 
@@ -63,12 +55,10 @@ class CourseStat(models.Model):
     threads: models.IntegerField[int, int] = models.IntegerField(default=0)
     responses: models.IntegerField[int, int] = models.IntegerField(default=0)
     replies: models.IntegerField[int, int] = models.IntegerField(default=0)
-    last_activity_at: models.DateTimeField[Optional[datetime], datetime] = (
-        models.DateTimeField(default=None, null=True, blank=True)
+    last_activity_at: models.DateTimeField[datetime | None, datetime] = models.DateTimeField(
+        default=None, null=True, blank=True
     )
-    user: models.ForeignKey[User, User] = models.ForeignKey(
-        User, related_name="course_stats", on_delete=models.CASCADE
-    )
+    user: models.ForeignKey[User, User] = models.ForeignKey(User, related_name="course_stats", on_delete=models.CASCADE)
 
     def to_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of the model."""
@@ -93,16 +83,14 @@ class Content(models.Model):
 
     index_name = ""
 
-    author: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
-    )
-    author_username: models.CharField[Optional[str], str] = models.CharField(
+    author: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    author_username: models.CharField[str | None, str] = models.CharField(
         max_length=255,
         null=True,
         blank=True,
         help_text="Username at time of posting, preserved for historical accuracy",
     )
-    retired_username: models.CharField[Optional[str], str] = models.CharField(
+    retired_username: models.CharField[str | None, str] = models.CharField(
         max_length=255,
         null=True,
         blank=True,
@@ -113,18 +101,10 @@ class Content(models.Model):
     visible: models.BooleanField[bool, bool] = models.BooleanField(default=True)
     endorsed: models.BooleanField[bool, bool] = models.BooleanField(default=False)
     anonymous: models.BooleanField[bool, bool] = models.BooleanField(default=False)
-    anonymous_to_peers: models.BooleanField[bool, bool] = models.BooleanField(
-        default=False
-    )
-    group_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(
-        null=True
-    )
-    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        auto_now_add=True
-    )
-    updated_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        auto_now=True
-    )
+    anonymous_to_peers: models.BooleanField[bool, bool] = models.BooleanField(default=False)
+    group_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(null=True)
+    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(auto_now=True)
     uservote = GenericRelation(
         "UserVote",
         object_id_field="content_object_id",
@@ -145,9 +125,9 @@ class Content(models.Model):
     def abuse_flaggers(self) -> list[int]:
         """Return a list of users who have flagged the content for abuse."""
         return list(
-            AbuseFlagger.objects.filter(
-                content_object_id=self.pk, content_type=self.content_type
-            ).values_list("user_id", flat=True)
+            AbuseFlagger.objects.filter(content_object_id=self.pk, content_type=self.content_type).values_list(
+                "user_id", flat=True
+            )
         )
 
     @property
@@ -162,9 +142,7 @@ class Content(models.Model):
     @property
     def edit_history(self) -> QuerySet[EditHistory]:
         """Return a list of edit history for the content."""
-        return EditHistory.objects.filter(
-            content_object_id=self.pk, content_type=self.content_type
-        )
+        return EditHistory.objects.filter(content_object_id=self.pk, content_type=self.content_type)
 
     @property
     def votes(self) -> models.QuerySet[UserVote]:
@@ -234,19 +212,11 @@ class CommentThread(Content):
     thread_type: models.CharField[str, str] = models.CharField(
         max_length=50, choices=THREAD_TYPE_CHOICES, default="discussion"
     )
-    context: models.CharField[str, str] = models.CharField(
-        max_length=50, choices=CONTEXT_CHOICES, default="course"
-    )
+    context: models.CharField[str, str] = models.CharField(max_length=50, choices=CONTEXT_CHOICES, default="course")
     closed: models.BooleanField[bool, bool] = models.BooleanField(default=False)
-    pinned: models.BooleanField[Optional[bool], bool] = models.BooleanField(
-        default=False
-    )
-    last_activity_at: models.DateTimeField[Optional[datetime], datetime] = (
-        models.DateTimeField(null=True, blank=True)
-    )
-    close_reason_code: models.CharField[Optional[str], str] = models.CharField(
-        max_length=255, null=True, blank=True
-    )
+    pinned: models.BooleanField[bool | None, bool] = models.BooleanField(default=False)
+    last_activity_at: models.DateTimeField[datetime | None, datetime] = models.DateTimeField(null=True, blank=True)
+    close_reason_code: models.CharField[str | None, str] = models.CharField(max_length=255, null=True, blank=True)
     closed_by: models.ForeignKey[User, User] = models.ForeignKey(
         User,
         related_name="threads_closed",
@@ -291,9 +261,7 @@ class CommentThread(Content):
             "votes": self.get_votes,
             "visible": self.visible,
             "abuse_flaggers": [str(flagger) for flagger in self.abuse_flaggers],
-            "historical_abuse_flaggers": [
-                str(flagger) for flagger in self.historical_abuse_flaggers
-            ],
+            "historical_abuse_flaggers": [str(flagger) for flagger in self.historical_abuse_flaggers],
             "thread_type": self.thread_type,
             "_type": "CommentThread",
             "commentable_id": self.commentable_id,
@@ -310,9 +278,7 @@ class CommentThread(Content):
             "closed_by_id": str(self.closed_by.pk) if self.closed_by else None,
             "close_reason_code": self.close_reason_code,
             "author_id": str(self.author.pk),
-            "author_username": self.author_username
-            or self.retired_username
-            or self.author.username,
+            "author_username": self.author_username or self.retired_username or self.author.username,
             "updated_at": self.updated_at,
             "created_at": self.created_at,
             "last_activity_at": self.last_activity_at,
@@ -330,9 +296,7 @@ class CommentThread(Content):
             "body": self.body,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-            "last_activity_at": (
-                self.last_activity_at.isoformat() if self.last_activity_at else None
-            ),
+            "last_activity_at": (self.last_activity_at.isoformat() if self.last_activity_at else None),
             "comment_count": self.comment_count,
             "votes_point": self.get_votes.get("point"),
             "context": self.context,
@@ -350,9 +314,7 @@ class CommentThread(Content):
             models.Index(fields=["author"]),
             models.Index(fields=["author", "course_id"]),
             models.Index(fields=["course_id", "anonymous", "anonymous_to_peers"]),
-            models.Index(
-                fields=["author", "course_id", "anonymous", "anonymous_to_peers"]
-            ),
+            models.Index(fields=["author", "course_id", "anonymous", "anonymous_to_peers"]),
         ]
 
 
@@ -361,27 +323,17 @@ class Comment(Content):
 
     index_name = "comments"
 
-    endorsement: models.JSONField[dict[str, Any], dict[str, Any]] = models.JSONField(
-        default=dict
-    )
-    sort_key: models.CharField[Optional[str], str] = models.CharField(
-        max_length=255, null=True, blank=True
-    )
-    child_count: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(
-        default=0
-    )
-    retired_username: models.CharField[Optional[str], str] = models.CharField(
-        max_length=255, null=True, blank=True
-    )
+    endorsement: models.JSONField[dict[str, Any], dict[str, Any]] = models.JSONField(default=dict)
+    sort_key: models.CharField[str | None, str] = models.CharField(max_length=255, null=True, blank=True)
+    child_count: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(default=0)
+    retired_username: models.CharField[str | None, str] = models.CharField(max_length=255, null=True, blank=True)
     comment_thread: models.ForeignKey[CommentThread, CommentThread] = models.ForeignKey(
         CommentThread, on_delete=models.CASCADE
     )
     parent: models.ForeignKey[Comment, Comment] = models.ForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True
     )
-    depth: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(
-        default=0
-    )
+    depth: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(default=0)
 
     def get_sort_key(self) -> str:
         """Get the sort key for the comment"""
@@ -407,9 +359,7 @@ class Comment(Content):
         result = []
         if sort:
             if sort == 1:
-                result = sorted(
-                    comments, key=lambda x: (x.sort_key is None, x.sort_key or "")
-                )
+                result = sorted(comments, key=lambda x: (x.sort_key is None, x.sort_key or ""))
             elif sort == -1:
                 result = sorted(
                     comments,
@@ -478,9 +428,7 @@ class Comment(Content):
             "votes": self.get_votes,
             "visible": self.visible,
             "abuse_flaggers": [str(flagger) for flagger in self.abuse_flaggers],
-            "historical_abuse_flaggers": [
-                str(flagger) for flagger in self.historical_abuse_flaggers
-            ],
+            "historical_abuse_flaggers": [str(flagger) for flagger in self.historical_abuse_flaggers],
             "parent_ids": self.get_parent_ids(),
             "parent_id": str(self.parent.pk) if self.parent else "None",
             "at_position_list": [],
@@ -493,9 +441,7 @@ class Comment(Content):
             "author_id": str(self.author.pk),
             "comment_thread_id": str(self.comment_thread.pk),
             "child_count": self.child_count,
-            "author_username": self.author_username
-            or self.retired_username
-            or self.author.username,
+            "author_username": self.author_username or self.retired_username or self.author.username,
             "sk": str(self.pk),
             "updated_at": self.updated_at,
             "created_at": self.created_at,
@@ -535,9 +481,7 @@ class Comment(Content):
             models.Index(fields=["comment_thread", "endorsed"]),
             models.Index(fields=["course_id", "parent", "endorsed"]),
             models.Index(fields=["course_id", "anonymous", "anonymous_to_peers"]),
-            models.Index(
-                fields=["author", "course_id", "anonymous", "anonymous_to_peers"]
-            ),
+            models.Index(fields=["author", "course_id", "anonymous", "anonymous_to_peers"]),
         ]
 
 
@@ -555,25 +499,17 @@ class EditHistory(models.Model):
         ("violates-guidelines", _("Violates community guidelines")),
     ]
 
-    reason_code: models.CharField[Optional[str], str] = models.CharField(
+    reason_code: models.CharField[str | None, str] = models.CharField(
         max_length=100,
         blank=True,
         null=True,
         choices=DISCUSSION_MODERATION_EDIT_REASON_CODES,
     )
     original_body: models.TextField[str, str] = models.TextField()
-    editor: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
-    )
-    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        auto_now_add=True
-    )
-    content_type: models.ForeignKey[ContentType] = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE
-    )
-    content_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField()
-    )
+    editor: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(auto_now_add=True)
+    content_type: models.ForeignKey[ContentType] = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField()
     content: GenericForeignKey = GenericForeignKey("content_type", "content_object_id")
 
     class Meta:
@@ -588,19 +524,11 @@ class EditHistory(models.Model):
 class AbuseFlagger(models.Model):
     """Abuse flagger model class"""
 
-    content_type: models.ForeignKey[ContentType] = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE
-    )
-    content_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField()
-    )
+    content_type: models.ForeignKey[ContentType] = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField()
     content: GenericForeignKey = GenericForeignKey("content_type", "content_object_id")
-    user: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
-    )
-    flagged_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        default=timezone.now
-    )
+    user: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    flagged_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(default=timezone.now)
 
     class Meta:
         app_label = "forum"
@@ -614,19 +542,11 @@ class AbuseFlagger(models.Model):
 class HistoricalAbuseFlagger(models.Model):
     """Historical abuse flagger model class"""
 
-    content_type: models.ForeignKey[ContentType] = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE
-    )
-    content_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField()
-    )
+    content_type: models.ForeignKey[ContentType] = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField()
     content: GenericForeignKey = GenericForeignKey("content_type", "content_object_id")
-    user: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
-    )
-    flagged_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        default=timezone.now
-    )
+    user: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    flagged_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(default=timezone.now)
 
     class Meta:
         app_label = "forum"
@@ -641,18 +561,14 @@ class ReadState(models.Model):
     """Read state model."""
 
     course_id: models.CharField[str, str] = models.CharField(max_length=255)
-    user: models.ForeignKey[User, User] = models.ForeignKey(
-        User, related_name="read_states", on_delete=models.CASCADE
-    )
+    user: models.ForeignKey[User, User] = models.ForeignKey(User, related_name="read_states", on_delete=models.CASCADE)
     last_read_times: models.QuerySet[LastReadTime]
 
     def to_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of the model."""
         last_read_times = {}
         for last_read_time in self.last_read_times.all():
-            last_read_times[str(last_read_time.comment_thread.pk)] = (
-                last_read_time.timestamp
-            )
+            last_read_times[str(last_read_time.comment_thread.pk)] = last_read_time.timestamp
         return {
             "_id": str(self.pk),
             "last_read_times": last_read_times,
@@ -690,19 +606,11 @@ class LastReadTime(models.Model):
 class UserVote(models.Model):
     """User votes model class"""
 
-    user: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
-    )
-    content_type: models.ForeignKey[ContentType] = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE
-    )
-    content_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField()
-    )
+    user: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    content_type: models.ForeignKey[ContentType] = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    content_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField()
     content: GenericForeignKey = GenericForeignKey("content_type", "content_object_id")
-    vote: models.IntegerField[int, int] = models.IntegerField(
-        validators=[validate_upvote_or_downvote]
-    )
+    vote: models.IntegerField[int, int] = models.IntegerField(validators=[validate_upvote_or_downvote])
 
     class Meta:
         app_label = "forum"
@@ -717,24 +625,14 @@ class UserVote(models.Model):
 class Subscription(models.Model):
     """Subscription model class"""
 
-    subscriber: models.ForeignKey[User, User] = models.ForeignKey(
-        User, on_delete=models.CASCADE
+    subscriber: models.ForeignKey[User, User] = models.ForeignKey(User, on_delete=models.CASCADE)
+    source_content_type: models.ForeignKey[ContentType, ContentType] = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE
     )
-    source_content_type: models.ForeignKey[ContentType, ContentType] = (
-        models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    )
-    source_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField()
-    )
-    source: GenericForeignKey = GenericForeignKey(
-        "source_content_type", "source_object_id"
-    )
-    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        auto_now_add=True
-    )
-    updated_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(
-        auto_now=True
-    )
+    source_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField()
+    source: GenericForeignKey = GenericForeignKey("source_content_type", "source_object_id")
+    created_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(auto_now_add=True)
+    updated_at: models.DateTimeField[datetime, datetime] = models.DateTimeField(auto_now=True)
 
     def to_dict(self) -> dict[str, Any]:
         """Return a dictionary representation of the model."""
@@ -752,9 +650,7 @@ class Subscription(models.Model):
         unique_together = ("subscriber", "source_content_type", "source_object_id")
         indexes = [
             models.Index(fields=["subscriber"]),
-            models.Index(
-                fields=["subscriber", "source_object_id", "source_content_type"]
-            ),
+            models.Index(fields=["subscriber", "source_object_id", "source_content_type"]),
             models.Index(fields=["subscriber", "source_content_type"]),
             models.Index(fields=["source_object_id", "source_content_type"]),
         ]
@@ -763,12 +659,8 @@ class Subscription(models.Model):
 class MongoContent(models.Model):
     """MongoContent model class."""
 
-    content_type: models.ForeignKey[ContentType] = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, null=True
-    )
-    content_object_id: models.PositiveIntegerField[int, int] = (
-        models.PositiveIntegerField(null=True)
-    )
+    content_type: models.ForeignKey[ContentType] = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
+    content_object_id: models.PositiveIntegerField[int, int] = models.PositiveIntegerField(null=True)
     content: GenericForeignKey = GenericForeignKey("content_type", "content_object_id")
     mongo_id: models.CharField[str, str] = models.CharField(max_length=50, unique=True)
 

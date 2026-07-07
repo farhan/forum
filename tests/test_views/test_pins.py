@@ -1,6 +1,7 @@
 """Test pin/unpin thread api endpoints."""
 
 from typing import Any
+
 import pytest
 
 from test_utils.client import APIClient
@@ -8,9 +9,7 @@ from test_utils.client import APIClient
 pytestmark = pytest.mark.django_db
 
 
-def test_pin_and_unpin_thread_api(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_pin_and_unpin_thread_api(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the pin/unpin thread API.
     This test checks that a user can pin/unpin a thread.
@@ -66,9 +65,7 @@ def test_pin_and_unpin_thread_api(
     assert thread["pinned"] is False
 
 
-def test_pin_unpin_thread_api_invalid_data(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_pin_unpin_thread_api_invalid_data(api_client: APIClient, patched_get_backend: Any) -> None:
     """
     Test the invalid data for pin/unpin thread API.
     This test checks that if user/thread exists or not.

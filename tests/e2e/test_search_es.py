@@ -4,7 +4,7 @@ Test Search Thread API Endpoints
 
 import logging
 import time
-from typing import Any, Optional
+from typing import Any
 from urllib.parse import urlencode
 
 import pytest
@@ -62,9 +62,7 @@ def refresh_elastic_search_indices() -> None:
     get_index_search_backend().refresh_indices()
 
 
-def test_invalid_request(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_invalid_request(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """
     Test that invalid requests to the search API return a 400 status.
 
@@ -327,9 +325,7 @@ def create_threads_and_comments_for_filter_tests(
     return threads_ids, threads_comments
 
 
-def assert_response_contains(
-    response: Response, expected_indexes: list[int], threads_ids: list[str]
-) -> None:
+def assert_response_contains(response: Response, expected_indexes: list[int], threads_ids: list[str]) -> None:
     """Assert that the response contains the expected thread IDs."""
     assert response.status_code == 200
     threads = response.json()["collection"]
@@ -347,21 +343,15 @@ def test_filter_threads_by_course_id(
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {"text": "text", "course_id": course_id_0}
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(30) if i % 2 == 0], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(30) if i % 2 == 0], threads_ids)
 
 
-def test_filter_threads_by_context(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_filter_threads_by_context(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """Test filtering threads by context."""
     backend = patched_get_backend()
 
@@ -369,9 +359,7 @@ def test_filter_threads_by_context(
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {"text": "text", "context": "standalone"}
@@ -379,9 +367,7 @@ def test_filter_threads_by_context(
     assert_response_contains(response, list(range(30, 35)), threads_ids)
 
 
-def test_filter_threads_by_unread(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_filter_threads_by_unread(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """Test filtering threads by unread status."""
     backend = patched_get_backend()
     course_id_0 = "course-v1:Arbisoft+SE002+2024_S2"
@@ -389,9 +375,7 @@ def test_filter_threads_by_unread(
     user_id = "1"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
     backend.mark_as_read(user_id, threads_ids[0])
 
@@ -402,23 +386,17 @@ def test_filter_threads_by_unread(
         "unread": "True",
     }
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(1, 30) if i % 2 == 0], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(1, 30) if i % 2 == 0], threads_ids)
 
 
-def test_filter_threads_by_flagged(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_filter_threads_by_flagged(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """Test filtering threads by flagged status."""
     backend = patched_get_backend()
     course_id_0 = "course-v1:Arbisoft+SE002+2024_S2"
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {"text": "text", "course_id": course_id_0, "flagged": "True"}
@@ -481,22 +459,16 @@ def test_filter_threads_by_commentable_id(
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {"text": "text", "commentable_id": "commentable0"}
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(30) if i % 3 == 0], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(30) if i % 3 == 0], threads_ids)
 
     params = {"text": "text", "commentable_ids": "commentable0,commentable1"}
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(30) if i % 3 in [0, 1]], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(30) if i % 3 in [0, 1]], threads_ids)
 
 
 def test_filter_threads_by_group_id(
@@ -508,36 +480,26 @@ def test_filter_threads_by_group_id(
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {"text": "text", "group_id": "1"}
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(30) if i % 5 in [0, 1]], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(30) if i % 5 in [0, 1]], threads_ids)
 
     params = {"text": "text", "group_ids": "1,2"}
     response = perform_search_query(api_client, params)
-    assert_response_contains(
-        response, [i for i in range(30) if i % 5 in [0, 1, 2]], threads_ids
-    )
+    assert_response_contains(response, [i for i in range(30) if i % 5 in [0, 1, 2]], threads_ids)
 
 
-def test_filter_threads_combined(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_filter_threads_combined(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """Test filtering threads with multiple filters combined."""
     backend = patched_get_backend()
     course_id_0 = "course-v1:Arbisoft+SE002+2024_S2"
     course_id_1 = "course-v1:Arbisoft+SE003+2024_S2"
 
     user_id, username = user_data
-    threads_ids, _ = create_threads_and_comments_for_filter_tests(
-        course_id_0, course_id_1, user_id, username, backend
-    )
+    threads_ids, _ = create_threads_and_comments_for_filter_tests(course_id_0, course_id_1, user_id, username, backend)
     refresh_elastic_search_indices()
 
     params = {
@@ -550,9 +512,7 @@ def test_filter_threads_combined(
     assert_response_contains(response, [0, 6], threads_ids)
 
 
-def test_pagination(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_pagination(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """
     Test pagination of search results. Ensures that results are correctly paginated and that the order of
     threads is as expected across different pages.
@@ -578,7 +538,7 @@ def test_pagination(
 
     refresh_elastic_search_indices()
 
-    def check_pagination(per_page: Optional[int], num_pages: int) -> None:
+    def check_pagination(per_page: int | None, num_pages: int) -> None:
         result_ids = []
         params = {"text": "text"}
         if per_page:
@@ -599,9 +559,7 @@ def test_pagination(
     check_pagination(None, 3)
 
 
-def test_sorting(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_sorting(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """
     Test the sorting functionality for threads based on various criteria, such as date, activity, votes, and comments.
     Asserts that the threads are sorted correctly according to the specified sorting key.
@@ -646,7 +604,7 @@ def test_sorting(
 
     refresh_elastic_search_indices()
 
-    def fetch_and_check(sort_key: Optional[str], expected_indexes: list[int]) -> None:
+    def fetch_and_check(sort_key: str | None, expected_indexes: list[int]) -> None:
         params = {"text": "text"}
         if sort_key:
             params["sort_key"] = str(sort_key)
@@ -657,9 +615,7 @@ def test_sorting(
         threads = result["collection"]
         expected_ids = [threads_ids[i] for i in expected_indexes]
         actual_ids = [thread["id"] for thread in threads]
-        assert (
-            actual_ids == expected_ids
-        ), f"Expected {expected_ids}, but got {actual_ids}"
+        assert actual_ids == expected_ids, f"Expected {expected_ids}, but got {actual_ids}"
 
     # Test various sorting scenarios
     fetch_and_check("date", [5, 4, 3, 2, 1, 0])
@@ -669,9 +625,7 @@ def test_sorting(
     fetch_and_check(None, [5, 4, 3, 2, 1, 0])  # Default sorting by date
 
 
-def test_spelling_correction(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_spelling_correction(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """
     Test the spelling correction feature in search.
     Verifies that misspelled words in both thread titles and comment bodies are correct
@@ -702,17 +656,15 @@ def test_spelling_correction(
     )
     refresh_elastic_search_indices()
 
-    def check_correction(original_text: str, corrected_text: Optional[str]) -> None:
+    def check_correction(original_text: str, corrected_text: str | None) -> None:
         params = {"text": original_text}
         response = perform_search_query(api_client, params)
         assert response.status_code == 200
         result = response.json()
-        assert (
-            result.get("corrected_text") == corrected_text
-        ), f"Expected '{corrected_text}', but got '{result.get('corrected_text')}'"
-        assert result[
-            "collection"
-        ], f"Expected non-empty collection for '{original_text}', but got empty."
+        assert result.get("corrected_text") == corrected_text, (
+            f"Expected '{corrected_text}', but got '{result.get('corrected_text')}'"
+        )
+        assert result["collection"], f"Expected non-empty collection for '{original_text}', but got empty."
 
     # Test: can correct a word appearing only in a comment
     check_correction("pinapples", "pineapples")
@@ -770,9 +722,7 @@ def test_spelling_correction_with_mush_clause(
     assert response.status_code == 200
     result = response.json()
     corrected_text = result.get("corrected_text")
-    assert (
-        corrected_text is None
-    ), f"Expected 'corrected_text' to be None, but got a value '{corrected_text}'."
+    assert corrected_text is None, f"Expected 'corrected_text' to be None, but got a value '{corrected_text}'."
     assert not result["collection"], "Expected an empty collection, but got results."
 
 
@@ -817,19 +767,17 @@ def test_total_results_and_num_pages(
     # Refresh Elasticsearch indices to ensure all comments are searchable
     refresh_elastic_search_indices()
 
-    def test_text(
-        text: str, expected_total_results: int, expected_num_pages: int
-    ) -> None:
+    def test_text(text: str, expected_total_results: int, expected_num_pages: int) -> None:
         params = {"course_id": course_id, "text": text, "per_page": "10"}
         response = perform_search_query(api_client, params)
         assert response.status_code == 200
         result = response.json()
-        assert (
-            result["total_results"] == expected_total_results
-        ), f"Expected total_results {expected_total_results}, but got {result['total_results']}"
-        assert (
-            result["num_pages"] == expected_num_pages
-        ), f"Expected num_pages {expected_num_pages}, but got {result['num_pages']}"
+        assert result["total_results"] == expected_total_results, (
+            f"Expected total_results {expected_total_results}, but got {result['total_results']}"
+        )
+        assert result["num_pages"] == expected_num_pages, (
+            f"Expected num_pages {expected_num_pages}, but got {result['num_pages']}"
+        )
 
     # Running the tests
     test_text("all", 100, 10)
@@ -839,9 +787,7 @@ def test_total_results_and_num_pages(
     test_text("one", 1, 1)
 
 
-def test_unicode_data(
-    api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]
-) -> None:
+def test_unicode_data(api_client: APIClient, patched_get_backend: Any, user_data: tuple[str, str]) -> None:
     """
     Test the handling of Unicode characters in search queries. Verifies that threads containing Unicode characters
     are searchable and return correct results when queried with ASCII search terms.

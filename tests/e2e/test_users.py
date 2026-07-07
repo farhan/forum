@@ -4,7 +4,7 @@ E2E testcases.
 
 import random
 import time
-from typing import Any, Optional
+from typing import Any
 
 import pytest
 from faker import Faker
@@ -44,7 +44,7 @@ def setup_10_threads(author_id: str, author_username: str, backend: Any) -> list
 
 def add_flags(
     content_type: str,
-    content_data: Optional[dict[str, Any]],
+    content_data: dict[str, Any] | None,
     expected_data: dict[str, Any],
     backend: Any,
 ) -> None:
@@ -68,12 +68,8 @@ def add_flags(
             historical_abuse_flaggers=historical_abuse_flaggers,
         )
 
-    expected_data[content_data["author_id"]]["active_flags"] += (
-        1 if abuse_flaggers else 0
-    )
-    expected_data[content_data["author_id"]]["inactive_flags"] += (
-        1 if historical_abuse_flaggers else 0
-    )
+    expected_data[content_data["author_id"]]["active_flags"] += 1 if abuse_flaggers else 0
+    expected_data[content_data["author_id"]]["inactive_flags"] += 1 if historical_abuse_flaggers else 0
 
 
 def build_structure_and_response(
@@ -104,9 +100,7 @@ def build_structure_and_response(
         thread_author = random.choice(authors)
         expected_data[str(thread_author["external_id"])]["threads"] += 1
         if with_timestamps:
-            expected_data[str(thread_author["external_id"])]["last_activity_at"] = (
-                time.strftime("%Y-%m-%dT%H:%M:%SZ")
-            )
+            expected_data[str(thread_author["external_id"])]["last_activity_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
         thread_id = backend.create_thread(
             {
                 "title": fake.word(),
@@ -124,9 +118,9 @@ def build_structure_and_response(
             comment_author = random.choice(authors)
             expected_data[str(comment_author["external_id"])]["responses"] += 1
             if with_timestamps:
-                expected_data[str(comment_author["external_id"])][
-                    "last_activity_at"
-                ] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                expected_data[str(comment_author["external_id"])]["last_activity_at"] = time.strftime(
+                    "%Y-%m-%dT%H:%M:%SZ"
+                )
             comment_id = backend.create_comment(
                 {
                     "body": fake.sentence(),
@@ -143,9 +137,9 @@ def build_structure_and_response(
                 reply_author = random.choice(authors)
                 expected_data[str(reply_author["external_id"])]["replies"] += 1
                 if with_timestamps:
-                    expected_data[str(reply_author["external_id"])][
-                        "last_activity_at"
-                    ] = time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                    expected_data[str(reply_author["external_id"])]["last_activity_at"] = time.strftime(
+                        "%Y-%m-%dT%H:%M:%SZ"
+                    )
 
                 reply_id = backend.create_comment(
                     {
@@ -168,15 +162,11 @@ def build_structure_and_response(
 
 
 @pytest.mark.parametrize("sort_key", [None, "recency", "flagged"])
-def test_get_user_stats(
-    api_client: Any, sort_key: Optional[str], patched_get_backend: Any
-) -> None:
+def test_get_user_stats(api_client: Any, sort_key: str | None, patched_get_backend: Any) -> None:
     """Test retrieving user stats with various sorting options."""
     backend = patched_get_backend()
     course_id = fake.word()
-    authors_ids = [
-        backend.find_or_create_user(str(i), username=f"author-{i}") for i in range(1, 7)
-    ]
+    authors_ids = [backend.find_or_create_user(str(i), username=f"author-{i}") for i in range(1, 7)]
     authors = [backend.get_user(author_id) or {} for author_id in authors_ids]
 
     build_structure_and_response(course_id, authors, backend)
@@ -188,9 +178,7 @@ def test_get_user_stats(
     res_data = response.json()["user_stats"]
 
     if sort_key == "recency":
-        expected_order = sorted(
-            res_data, key=lambda x: (x["last_activity_at"], x["username"]), reverse=True
-        )
+        expected_order = sorted(res_data, key=lambda x: (x["last_activity_at"], x["username"]), reverse=True)
     elif sort_key == "flagged":
         expected_order = sorted(
             res_data,
@@ -211,9 +199,7 @@ def test_stats_for_user_with_no_activity(api_client: Any) -> None:
     """Test handling stats for user with no activity."""
     invalid_course_id = "course-v1:edX+DNE+Not_EXISTS"
 
-    response = api_client.get_json(
-        f"/api/v2/users/{invalid_course_id}/stats", params={}
-    )
+    response = api_client.get_json(f"/api/v2/users/{invalid_course_id}/stats", params={})
     assert response.status_code == 200
 
     res_data = response.json()["user_stats"]
@@ -226,26 +212,19 @@ def test_user_stats_filtered_by_user(api_client: Any, patched_get_backend: Any) 
     course_id = fake.word()
 
     # Create some users
-    authors_ids = [
-        backend.find_or_create_user(str(i), username=f"userauthor-{i}")
-        for i in range(1, 11)
-    ]
+    authors_ids = [backend.find_or_create_user(str(i), username=f"userauthor-{i}") for i in range(1, 11)]
     authors = [backend.get_user(author_id) or {} for author_id in authors_ids]
 
     # Build structure and response
     full_data = build_structure_and_response(course_id, authors, backend)
 
     # Randomly sample and shuffle usernames
-    usernames = [
-        "userauthor-1"
-    ]  # random.sample([f"userauthor-{i}" for i in range(1, 4)], 2)
+    usernames = ["userauthor-1"]  # random.sample([f"userauthor-{i}" for i in range(1, 4)], 2)
 
     usernames_str = ",".join(usernames)
 
     # Get user stats filtered by usernames
-    response = api_client.get_json(
-        f"/api/v2/users/{course_id}/stats?usernames={usernames_str}", params={}
-    )
+    response = api_client.get_json(f"/api/v2/users/{course_id}/stats?usernames={usernames_str}", params={})
     assert response.status_code == 200
 
     res_data = response.json()["user_stats"]
@@ -259,17 +238,12 @@ def test_user_stats_filtered_by_user(api_client: Any, patched_get_backend: Any) 
     assert res_data == expected_result
 
 
-def test_user_stats_with_recency_sort(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_user_stats_with_recency_sort(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test returning user stats with recency sort."""
     backend = patched_get_backend()
     course_id = fake.word()
     # Create some users
-    authors_ids = [
-        backend.find_or_create_user(str(i), username=f"userauthor-{i}")
-        for i in range(1, 6)
-    ]
+    authors_ids = [backend.find_or_create_user(str(i), username=f"userauthor-{i}") for i in range(1, 6)]
     authors = [backend.get_user(author_id) or {} for author_id in authors_ids]
 
     # Build structure with timestamps
@@ -285,24 +259,17 @@ def test_user_stats_with_recency_sort(
     res_data = response.json()["user_stats"]
 
     # Sort by last_activity_at and username in reverse order
-    sorted_order = sorted(
-        res_data, key=lambda x: (x["last_activity_at"], x["username"]), reverse=True
-    )
+    sorted_order = sorted(res_data, key=lambda x: (x["last_activity_at"], x["username"]), reverse=True)
 
     assert res_data == sorted_order
 
 
 @pytest.fixture(name="original_stats")
-def get_original_stats(
-    api_client: APIClient, patched_get_backend: Any
-) -> tuple[dict[str, Any], str, str]:
+def get_original_stats(api_client: APIClient, patched_get_backend: Any) -> tuple[dict[str, Any], str, str]:
     """Setup the initial data structure and save stats."""
     backend = patched_get_backend()
     course_id = fake.word()
-    authors_ids = [
-        backend.find_or_create_user(str(i), username=f"userauthor-{i}")
-        for i in range(1, 4)
-    ]
+    authors_ids = [backend.find_or_create_user(str(i), username=f"userauthor-{i}") for i in range(1, 4)]
     authors = [backend.get_user(author_id) or {} for author_id in authors_ids]
 
     build_structure_and_response(course_id, authors, backend)
@@ -323,15 +290,13 @@ def get_new_stats(
     api_client: APIClient,
     course_id: str,
     original_username: str,
-) -> Optional[dict[str, Any]]:
+) -> dict[str, Any] | None:
     """Fetch the new stats after performing actions."""
     response = api_client.get_json(f"/api/v2/users/{course_id}/stats", params={})
     assert response.status_code == 200
 
     res_data = response.json()["user_stats"]
-    return next(
-        (stat for stat in res_data if stat["username"] == original_username), None
-    )
+    return next((stat for stat in res_data if stat["username"] == original_username), None)
 
 
 def test_handles_deleting_threads(
@@ -433,9 +398,7 @@ def test_handles_deleting_responses(
     user = backend.get_user_by_username(username)
     assert user is not None
 
-    comment = backend.find_comment(
-        author_id=user["_id"], course_id=course_id, parent_id=None
-    )
+    comment = backend.find_comment(author_id=user["_id"], course_id=course_id, parent_id=None)
     assert comment is not None
 
     response = api_client.delete_json(f"/api/v2/comments/{str(comment['_id'])}")
@@ -491,9 +454,7 @@ def test_handles_deleting_replies(
     assert user is not None
 
     # Find a reply (comment with a parent_id)
-    reply = backend.find_comment(
-        author_id=user["_id"], course_id=course_id, is_parent_comment=False
-    )
+    reply = backend.find_comment(author_id=user["_id"], course_id=course_id, is_parent_comment=False)
     assert reply is not None
 
     # Delete the reply
@@ -522,9 +483,7 @@ def test_handles_removing_flags(
     assert user is not None
 
     # Find a comment with existing abuse flaggers
-    comment = backend.find_comment(
-        author_id=user["_id"], course_id=course_id, with_abuse_flaggers=True
-    )
+    comment = backend.find_comment(author_id=user["_id"], course_id=course_id, with_abuse_flaggers=True)
     assert comment is not None
 
     # Set abuse flaggers to two users
@@ -560,9 +519,7 @@ def test_handles_removing_flags(
     assert new_stats["active_flags"] == stats["active_flags"] - 1
 
 
-def test_build_course_stats_with_anonymous_posts(
-    api_client: APIClient, patched_get_backend: Any
-) -> None:
+def test_build_course_stats_with_anonymous_posts(api_client: APIClient, patched_get_backend: Any) -> None:
     """Test that anonymous posts are not included in user stats after a non-anonymous post."""
     backend = patched_get_backend()
     # Create a test user
@@ -605,15 +562,10 @@ def test_update_user_stats(api_client: APIClient, patched_get_backend: Any) -> N
     backend = patched_get_backend()
     # Create a test course ID and users
     course_id = fake.word()
-    authors_ids = [
-        backend.find_or_create_user(user_id=str(i), username=f"author-{i}")
-        for i in range(1, 7)
-    ]
+    authors_ids = [backend.find_or_create_user(user_id=str(i), username=f"author-{i}") for i in range(1, 7)]
     authors = [backend.get_user(author_id) or {} for author_id in authors_ids]
     # Build the expected data without initial stats
-    expected_data = build_structure_and_response(
-        course_id, authors, backend, build_initial_stats=False
-    )
+    expected_data = build_structure_and_response(course_id, authors, backend, build_initial_stats=False)
 
     # Sort the data for expected result (threads, responses, replies)
     expected_result = sorted(
@@ -639,9 +591,7 @@ def test_update_user_stats(api_client: APIClient, patched_get_backend: Any) -> N
     assert response.status_code == 200
     res = response.json()
 
-    assert (
-        res["user_stats"] == expected_result
-    )  # User stats should now match the expected data
+    assert res["user_stats"] == expected_result  # User stats should now match the expected data
 
 
 def test_mark_thread_as_read(api_client: APIClient, patched_get_backend: Any) -> None:
@@ -668,15 +618,11 @@ def test_mark_thread_as_read(api_client: APIClient, patched_get_backend: Any) ->
     # Reload the user and verify read state
     user = backend.get_user(user_id) or {}
     read_states = [
-        course_state
-        for course_state in user["read_states"]
-        if course_state["course_id"] == thread["course_id"]
+        course_state for course_state in user["read_states"] if course_state["course_id"] == thread["course_id"]
     ]
     read_date = read_states[0]["last_read_times"][str(thread["_id"])]
 
-    assert (
-        read_date >= thread["updated_at"]
-    )  # Verify the read date is on or after the thread's updated_at
+    assert read_date >= thread["updated_at"]  # Verify the read date is on or after the thread's updated_at
 
 
 def test_retire_user_inactive(api_client: APIClient, patched_get_backend: Any) -> None:

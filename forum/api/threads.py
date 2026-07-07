@@ -3,7 +3,7 @@ Native Python Threads APIs.
 """
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.serializers import ValidationError
@@ -65,10 +65,10 @@ def get_thread_data(thread: dict[str, Any]) -> dict[str, Any]:
 def prepare_thread_api_response(
     thread: dict[str, Any],
     backend: Any,
-    include_context: Optional[bool] = False,
-    data_or_params: Optional[dict[str, Any]] = None,
-    include_data_from_params: Optional[bool] = False,
-    course_id: Optional[str] = None,
+    include_context: bool | None = False,
+    data_or_params: dict[str, Any] | None = None,
+    include_data_from_params: bool | None = False,
+    course_id: str | None = None,
 ) -> dict[str, Any]:
     """Serialize thread data for the api response."""
     thread_data = get_thread_data(thread)
@@ -84,12 +84,8 @@ def prepare_thread_api_response(
                 context["user_id"] = user_id
 
             if include_data_from_params:
-                thread_data["resp_skip"] = get_int_value_from_collection(
-                    data_or_params, "resp_skip", 0
-                )
-                thread_data["resp_limit"] = get_int_value_from_collection(
-                    data_or_params, "resp_limit", 100
-                )
+                thread_data["resp_skip"] = get_int_value_from_collection(data_or_params, "resp_skip", 0)
+                thread_data["resp_limit"] = get_int_value_from_collection(data_or_params, "resp_limit", 100)
                 params = [
                     "recursive",
                     "with_responses",
@@ -117,8 +113,8 @@ def prepare_thread_api_response(
 
 def get_thread(
     thread_id: str,
-    params: Optional[dict[str, Any]] = None,
-    course_id: Optional[str] = None,
+    params: dict[str, Any] | None = None,
+    course_id: str | None = None,
 ) -> dict[str, Any]:
     """
     Get the thread for the given thread_id.
@@ -141,9 +137,7 @@ def get_thread(
         thread = backend.validate_object("CommentThread", thread_id)
     except ObjectDoesNotExist as exc:
         log.error("Forumv2RequestError for get thread request.")
-        raise ForumV2RequestError(
-            f"Thread does not exist with Id: {thread_id}"
-        ) from exc
+        raise ForumV2RequestError(f"Thread does not exist with Id: {thread_id}") from exc
 
     try:
         return prepare_thread_api_response(
@@ -159,7 +153,7 @@ def get_thread(
         raise ForumV2RequestError("Failed to prepare thread API response") from error
 
 
-def delete_thread(thread_id: str, course_id: Optional[str] = None) -> dict[str, Any]:
+def delete_thread(thread_id: str, course_id: str | None = None) -> dict[str, Any]:
     """
     Delete the thread for the given thread_id.
 
@@ -173,9 +167,7 @@ def delete_thread(thread_id: str, course_id: Optional[str] = None) -> dict[str, 
         thread = backend.validate_object("CommentThread", thread_id)
     except ObjectDoesNotExist as exc:
         log.error("Forumv2RequestError for delete thread request.")
-        raise ForumV2RequestError(
-            f"Thread does not exist with Id: {thread_id}"
-        ) from exc
+        raise ForumV2RequestError(f"Thread does not exist with Id: {thread_id}") from exc
 
     backend.delete_comments_of_a_thread(thread_id)
     thread = backend.validate_object("CommentThread", thread_id)
@@ -189,30 +181,28 @@ def delete_thread(thread_id: str, course_id: Optional[str] = None) -> dict[str, 
     backend.delete_subscriptions_of_a_thread(thread_id)
     result = backend.delete_thread(thread_id)
     if result and not (thread["anonymous"] or thread["anonymous_to_peers"]):
-        backend.update_stats_for_course(
-            thread["author_id"], thread["course_id"], threads=-1
-        )
+        backend.update_stats_for_course(thread["author_id"], thread["course_id"], threads=-1)
 
     return serialized_data
 
 
 def update_thread(
     thread_id: str,
-    title: Optional[str] = None,
-    body: Optional[str] = None,
-    course_id: Optional[str] = None,
-    anonymous: Optional[bool] = None,
-    anonymous_to_peers: Optional[bool] = None,
-    closed: Optional[bool] = None,
-    commentable_id: Optional[str] = None,
-    user_id: Optional[str] = None,
-    editing_user_id: Optional[str] = None,
-    pinned: Optional[bool] = None,
-    thread_type: Optional[str] = None,
-    edit_reason_code: Optional[str] = None,
-    close_reason_code: Optional[str] = None,
-    closing_user_id: Optional[str] = None,
-    endorsed: Optional[bool] = None,
+    title: str | None = None,
+    body: str | None = None,
+    course_id: str | None = None,
+    anonymous: bool | None = None,
+    anonymous_to_peers: bool | None = None,
+    closed: bool | None = None,
+    commentable_id: str | None = None,
+    user_id: str | None = None,
+    editing_user_id: str | None = None,
+    pinned: bool | None = None,
+    thread_type: str | None = None,
+    edit_reason_code: str | None = None,
+    close_reason_code: str | None = None,
+    closing_user_id: str | None = None,
+    endorsed: bool | None = None,
 ) -> dict[str, Any]:
     """
     Update the thread for the given thread_id.
@@ -228,9 +218,7 @@ def update_thread(
         thread = backend.validate_object("CommentThread", thread_id)
     except ObjectDoesNotExist as exc:
         log.error("Forumv2RequestError for update thread request.")
-        raise ForumV2RequestError(
-            f"Thread does not exist with Id: {thread_id}"
-        ) from exc
+        raise ForumV2RequestError(f"Thread does not exist with Id: {thread_id}") from exc
 
     data = {
         "title": title,
@@ -254,19 +242,13 @@ def update_thread(
         update_thread_data["original_body"] = thread.get("body")
 
     if update_thread_data.get("closed"):
-        missing_fields = {"close_reason_code", "closed_by_id"} - set(
-            update_thread_data.keys()
-        )
+        missing_fields = {"close_reason_code", "closed_by_id"} - set(update_thread_data.keys())
         if missing_fields:
-            raise ForumV2RequestError(
-                f"Missing required fields: {', '.join(missing_fields)}"
-            )
+            raise ForumV2RequestError(f"Missing required fields: {', '.join(missing_fields)}")
     backend.update_thread(thread_id, **update_thread_data)
     thread = backend.get_thread(thread_id)
     if thread is None:
-        log.error(
-            "Forumv2RequestError for update thread request - retrieving updated thread to send in response."
-        )
+        log.error("Forumv2RequestError for update thread request - retrieving updated thread to send in response.")
         raise ForumV2RequestError(f"Thread no longer exists with Id: {thread_id}")
 
     try:
@@ -290,7 +272,7 @@ def create_thread(
     anonymous_to_peers: bool = False,
     commentable_id: str = "course",
     thread_type: str = "discussion",
-    group_id: Optional[int] = None,
+    group_id: int | None = None,
     context: str = "course",
 ) -> dict[str, Any]:
     """
@@ -330,9 +312,7 @@ def create_thread(
         raise ForumV2RequestError(f"Failed to create thread with data: {data}")
 
     if not (anonymous or anonymous_to_peers):
-        backend.update_stats_for_course(
-            thread["author_id"], thread["course_id"], threads=1
-        )
+        backend.update_stats_for_course(thread["author_id"], thread["course_id"], threads=1)
 
     try:
         return prepare_thread_api_response(
@@ -348,22 +328,22 @@ def create_thread(
 
 def get_user_threads(
     course_id: str,
-    author_id: Optional[str] = None,
-    thread_type: Optional[str] = None,
-    flagged: Optional[bool] = None,
-    unread: Optional[bool] = None,
-    unanswered: Optional[bool] = None,
-    unresponded: Optional[bool] = None,
-    count_flagged: Optional[bool] = None,
-    sort_key: Optional[str] = None,
-    page: Optional[str] = None,
-    per_page: Optional[str] = None,
-    request_id: Optional[str] = None,
-    commentable_ids: Optional[str] = None,
-    user_id: Optional[str] = None,
-    group_id: Optional[int] = None,
-    group_ids: Optional[int] = None,
-    context: Optional[str] = None,
+    author_id: str | None = None,
+    thread_type: str | None = None,
+    flagged: bool | None = None,
+    unread: bool | None = None,
+    unanswered: bool | None = None,
+    unresponded: bool | None = None,
+    count_flagged: bool | None = None,
+    sort_key: str | None = None,
+    page: str | None = None,
+    per_page: str | None = None,
+    request_id: str | None = None,
+    commentable_ids: str | None = None,
+    user_id: str | None = None,
+    group_id: int | None = None,
+    group_ids: int | None = None,
+    context: str | None = None,
     **kwargs: Any,
 ) -> dict[str, Any]:
     """

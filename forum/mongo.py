@@ -1,7 +1,7 @@
 """Mongo module for forum app."""
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from django.conf import settings
 from pymongo import MongoClient
@@ -13,8 +13,8 @@ Database = PymongoDatabase[dict[str, Any]]
 
 
 def get_database(
-    database: Optional[str] = None,
-    client_params: Optional[dict[Any, Any]] = None,
+    database: str | None = None,
+    client_params: dict[Any, Any] | None = None,
 ) -> Database:
     """
     Connect to MongoDB.

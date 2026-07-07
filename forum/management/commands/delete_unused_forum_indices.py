@@ -10,9 +10,7 @@ class Command(BaseCommand):
     Django management command for the deletion of unused search indices.
     """
 
-    help = (
-        "Delete all Elasticsearch indices that are not the latest for each model type."
-    )
+    help = "Delete all Elasticsearch indices that are not the latest for each model type."
 
     def handle(self, *args: list[str], **kwargs: dict[str, str]) -> None:
         """
@@ -22,8 +20,4 @@ class Command(BaseCommand):
         """
         search_backend = get_index_search_backend()
         indices_deleted_count = search_backend.delete_unused_indices()
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"{indices_deleted_count} unused indices deleted successfully."
-            )
-        )
+        self.stdout.write(self.style.SUCCESS(f"{indices_deleted_count} unused indices deleted successfully."))

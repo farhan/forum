@@ -2,13 +2,13 @@
 Unit tests for the typesense search backend.
 """
 
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from typesense.exceptions import ObjectNotFound
 
-from forum.search import typesense
 from forum import constants
+from forum.search import typesense
 
 
 def test_quote_filter() -> None:
@@ -78,12 +78,8 @@ def test_document_from_comment() -> None:
 def test_search_threads(mock_get_client: Mock) -> None:
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
-    mock_search = mock_client.collections[
-        "forum_unittest_prefix_forum"
-    ].documents.search
-    mock_search.return_value = {
-        "hits": [{"document": {"thread_id": "ONE"}}, {"document": {"thread_id": "TWO"}}]
-    }
+    mock_search = mock_client.collections["forum_unittest_prefix_forum"].documents.search
+    mock_search.return_value = {"hits": [{"document": {"thread_id": "ONE"}}, {"document": {"thread_id": "TWO"}}]}
 
     backend = typesense.TypesenseThreadSearchBackend()
     assert sorted(
@@ -177,11 +173,7 @@ def test_index_invalid_type() -> None:
 def test_delete_document(mock_get_client: Mock) -> None:
     mock_client = MagicMock()
     mock_get_client.return_value = mock_client
-    mock_delete = (
-        mock_client.collections["forum_unittest_prefix_forum"]
-        .documents["comment-MYCOMMENTID"]
-        .delete
-    )
+    mock_delete = mock_client.collections["forum_unittest_prefix_forum"].documents["comment-MYCOMMENTID"].delete
 
     backend = typesense.TypesenseDocumentBackend()
     backend.delete_document("comments", "MYCOMMENTID")
