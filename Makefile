@@ -10,7 +10,7 @@
 # For opening files in a browser. Use like: $(BROWSER)relative/path/to/file.html
 BROWSER := python -m webbrowser file://$(CURDIR)/
 
-SRC_FILES_PROD = forum tests test_utils manage.py
+SRC_FILES_PROD = src/forum tests test_utils manage.py
 
 help: ## display this help message
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -74,13 +74,13 @@ selfcheck: ## check that the Makefile is well-formed
 
 extract_translations: ## extract strings to be translated, outputting .mo files
 	rm -rf docs/_build
-	cd forum && i18n_tool extract --no-segment
+	cd src/forum && i18n_tool extract --no-segment
 
 compile_translations: ## compile translation files, outputting .po files for each supported language
-	cd forum && i18n_tool generate
+	cd src/forum && i18n_tool generate
 
 detect_changed_source_translations:
-	cd forum && i18n_tool changed
+	cd src/forum && i18n_tool changed
 
 ifeq ($(OPENEDX_ATLAS_PULL),)
 pull_translations: ## Pull translations from Transifex
@@ -88,8 +88,8 @@ pull_translations: ## Pull translations from Transifex
 else
 # Experimental: OEP-58 Pulls translations using atlas
 pull_translations:
-	find forum/conf/locale -mindepth 1 -maxdepth 1 -type d -exec rm -r {} \;
-	atlas pull $(OPENEDX_ATLAS_ARGS) translations/forum/forum/conf/locale:forum/conf/locale
+	find src/forum/conf/locale -mindepth 1 -maxdepth 1 -type d -exec rm -r {} \;
+	atlas pull $(OPENEDX_ATLAS_ARGS) translations/forum/forum/conf/locale:src/forum/conf/locale
 	python manage.py compilemessages
 
 	@echo "Translations have been pulled via Atlas and compiled."
@@ -99,7 +99,7 @@ push_translations: ## push source translation files (.po) from Transifex
 	tx push -s
 
 dummy_translations: ## generate dummy translation (.po) files
-	cd forum && i18n_tool dummy
+	cd src/forum && i18n_tool dummy
 
 build_dummy_translations: extract_translations dummy_translations compile_translations ## generate and compile dummy translation files
 

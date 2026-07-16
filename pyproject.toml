@@ -52,8 +52,8 @@ forum = "forum.apps:ForumConfig"
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["forum", "forum.*"]
-exclude = ["*tests"]
+where = ["src"]
+exclude = ["tests*", "docs*"]
 
 [tool.setuptools.package-data]
 "*" = [
@@ -146,16 +146,16 @@ uv_constraints = []
 # https://docs.pytest.org/en/stable/reference/customize.html
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "forum.settings.test"
-addopts = "--cov forum --cov tests --cov-report term-missing --cov-report xml"
+addopts = "--cov --cov-report term-missing --cov-report xml"
 norecursedirs = [".*", "docs", "requirements", "site-packages", "e2e"]
 
 # Coverage configuration
 # https://coverage.readthedocs.io/en/latest/config.html
 [tool.coverage.run]
 branch = true
-source = ["forum"]
+source_pkgs = ["forum"]
 omit = [
-    "forum/settings/test.py",
+    "*/forum/settings/test.py",
     "*/migrations/*",
     "*admin.py",
     "*/static/*",
