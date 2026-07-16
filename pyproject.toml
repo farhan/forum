@@ -209,3 +209,6 @@ ignore_missing_imports = true
 # Use SETUPTOOLS_SCM_PRETEND_VERSION to set version at build time since the
 # build step happens before the repo gets tagged.
 build_command = "pip install build && SETUPTOOLS_SCM_PRETEND_VERSION=$NEW_VERSION python -m build"
+# Repo is on 0.x: prevent a feat: commit from bumping 0.x.y → 1.0.0
+allow_zero_version = true
+major_on_zero = false
