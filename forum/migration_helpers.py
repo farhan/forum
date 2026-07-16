@@ -1,7 +1,7 @@
 """Migration commands helper methods."""
 
-from typing import Any
 import logging
+from typing import Any
 
 from django.contrib.auth.models import User  # pylint: disable=E5142
 from django.core.management.base import OutputWrapper
@@ -9,21 +9,9 @@ from django.utils import timezone
 from pymongo.collection import Collection
 from pymongo.database import Database
 
-from forum.models import (
-    AbuseFlagger,
-    Comment,
-    CommentThread,
-    CourseStat,
-    EditHistory,
-    ForumUser,
-    HistoricalAbuseFlagger,
-    LastReadTime,
-    MongoContent,
-    ReadState,
-    Subscription,
-    UserVote,
-)
-from forum.utils import make_aware, get_trunc_title
+from forum.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
+                          HistoricalAbuseFlagger, LastReadTime, MongoContent, ReadState, Subscription, UserVote)
+from forum.utils import get_trunc_title, make_aware
 
 logger = logging.getLogger(__name__)
 

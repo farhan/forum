@@ -7,20 +7,15 @@ from typing import Any, Optional, cast
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.core.paginator import Paginator
-
 from typesense import Client
+from typesense.exceptions import ObjectNotFound
 from typesense.types.collection import CollectionCreateSchema
 from typesense.types.document import DocumentSchema, SearchParameters
-from typesense.exceptions import ObjectNotFound
 
 from forum.backends.mysql.models import Comment, CommentThread
 from forum.constants import FORUM_MAX_DEEP_SEARCH_COMMENT_COUNT
-from forum.search.base import (
-    BaseDocumentSearchBackend,
-    BaseIndexSearchBackend,
-    BaseSearchBackend,
-    BaseThreadSearchBackend,
-)
+from forum.search.base import (BaseDocumentSearchBackend, BaseIndexSearchBackend, BaseSearchBackend,
+                               BaseThreadSearchBackend)
 
 _TYPESENSE_CLIENT: Client | None = None
 

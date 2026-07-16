@@ -2,15 +2,9 @@
 
 from typing import Any
 
-from django.core.management.base import BaseCommand
-from django.core.management.base import CommandParser
+from django.core.management.base import BaseCommand, CommandParser
 
-from forum.migration_helpers import (
-    get_all_course_ids,
-    migrate_content,
-    migrate_read_states,
-    migrate_users,
-)
+from forum.migration_helpers import get_all_course_ids, migrate_content, migrate_read_states, migrate_users
 from forum.mongo import get_database
 
 

@@ -9,38 +9,15 @@ from django.contrib.auth.models import User  # pylint: disable=E5142
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator
-from django.db.models import (
-    Case,
-    Count,
-    Exists,
-    F,
-    IntegerField,
-    Max,
-    OuterRef,
-    Q,
-    Subquery,
-    Sum,
-    When,
-)
+from django.db.models import Case, Count, Exists, F, IntegerField, Max, OuterRef, Q, Subquery, Sum, When
 from django.db.models.functions import Coalesce
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 
 from forum.backends.backend import AbstractBackend
-from forum.backends.mysql.models import (
-    AbuseFlagger,
-    Comment,
-    CommentThread,
-    CourseStat,
-    EditHistory,
-    ForumUser,
-    HistoricalAbuseFlagger,
-    LastReadTime,
-    ReadState,
-    Subscription,
-    UserVote,
-)
+from forum.backends.mysql.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
+                                         HistoricalAbuseFlagger, LastReadTime, ReadState, Subscription, UserVote)
 from forum.constants import RETIRED_BODY, RETIRED_TITLE
 from forum.utils import get_group_ids_from_params
 

@@ -117,7 +117,6 @@ quality = [
     "isort",
     "pycodestyle",
     "pydocstyle",
-    "black",
     "mypy",
     "djangorestframework-stubs",
     "types-beautifulsoup4",

@@ -2,6 +2,7 @@
 
 import time
 from typing import Any, Optional
+
 import pytest
 
 from test_utils.client import APIClient

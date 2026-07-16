@@ -11,18 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from forum.api import get_user
-from forum.api.users import (
-    create_user,
-    delete_user_posts,
-    get_user_active_threads,
-    get_user_course_stats,
-    get_user_post_counts,
-    mark_thread_as_read,
-    retire_user,
-    update_user,
-    update_username,
-    update_users_in_course,
-)
+from forum.api.users import (create_user, delete_user_posts, get_user_active_threads, get_user_course_stats,
+                             get_user_post_counts, mark_thread_as_read, retire_user, update_user, update_username,
+                             update_users_in_course)
 from forum.utils import ForumV2RequestError, get_group_ids_from_params, str_to_bool
 
 log = logging.getLogger(__name__)

@@ -8,19 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
 from django.utils import timezone
 
-from forum.backends.mysql.models import (
-    AbuseFlagger,
-    Comment,
-    CommentThread,
-    CourseStat,
-    EditHistory,
-    ForumUser,
-    HistoricalAbuseFlagger,
-    LastReadTime,
-    ReadState,
-    Subscription,
-    UserVote,
-)
+from forum.backends.mysql.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
+                                         HistoricalAbuseFlagger, LastReadTime, ReadState, Subscription, UserVote)
 
 User = get_user_model()
 

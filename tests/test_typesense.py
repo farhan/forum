@@ -2,13 +2,13 @@
 Unit tests for the typesense search backend.
 """
 
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 from typesense.exceptions import ObjectNotFound
 
-from forum.search import typesense
 from forum import constants
+from forum.search import typesense
 
 
 def test_quote_filter() -> None:

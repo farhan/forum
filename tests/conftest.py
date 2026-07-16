@@ -12,10 +12,7 @@ from pymongo.database import Database
 
 from forum.backends.mysql.api import MySQLBackend
 from test_utils.client import APIClient
-from test_utils.mock_es_backend import (
-    MockElasticsearchIndexBackend,
-    MockElasticsearchDocumentBackend,
-)
+from test_utils.mock_es_backend import MockElasticsearchDocumentBackend, MockElasticsearchIndexBackend
 
 
 @pytest.fixture(name="api_client")

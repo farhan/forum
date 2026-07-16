@@ -8,12 +8,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from forum.api.subscriptions import (
-    create_subscription,
-    delete_subscription,
-    get_thread_subscriptions,
-    get_user_subscriptions,
-)
+from forum.api.subscriptions import (create_subscription, delete_subscription, get_thread_subscriptions,
+                                     get_user_subscriptions)
 from forum.pagination import ForumPagination
 from forum.utils import ForumV2RequestError
 
