@@ -135,6 +135,7 @@ ci = [
 dev = [
     {include-group = "quality"},
     {include-group = "ci"},
+    "black",
     "diff-cover",
     "edx-i18n-tools",
 ]
