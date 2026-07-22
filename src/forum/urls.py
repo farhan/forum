@@ -11,9 +11,16 @@ from forum.views.pins import PinThreadAPIView, UnpinThreadAPIView
 from forum.views.search import SearchThreadsView
 from forum.views.subscriptions import SubscriptionAPIView, ThreadSubscriptionAPIView, UserSubscriptionAPIView
 from forum.views.threads import CreateThreadAPIView, ThreadsAPIView, UserThreadsAPIView
-from forum.views.users import (BulkDeleteUserPostsAPIView, UserActiveThreadsAPIView, UserAPIView,
-                               UserCourseStatsAPIView, UserCreateAPIView, UserEditAPIView, UserReadAPIView,
-                               UserRetireAPIView)
+from forum.views.users import (
+    BulkDeleteUserPostsAPIView,
+    UserActiveThreadsAPIView,
+    UserAPIView,
+    UserCourseStatsAPIView,
+    UserCreateAPIView,
+    UserEditAPIView,
+    UserReadAPIView,
+    UserRetireAPIView,
+)
 from forum.views.votes import CommentVoteView, ThreadVoteView
 
 api_patterns = [

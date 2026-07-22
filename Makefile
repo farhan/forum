@@ -1,4 +1,4 @@
-.PHONY: help requirements upgrade lint mypy format test docs clean \
+.PHONY: help requirements upgrade quality mypy format test docs clean \
         extract_translations compile_translations dummy_translations \
         pull_translations push_translations validate_translations \
         build_dummy_translations detect_changed_source_translations \
@@ -34,7 +34,7 @@ upgrade: ## Upgrade python dependencies and regenerate uv constraints
 	uv run --with edx-lint edx_lint write_uv_constraints pyproject.toml
 	uv lock --upgrade
 
-lint: ## Run linting checks
+quality: ## Run linting and other quality checks
 	uv run tox -e quality
 
 mypy: ## Run mypy type checks

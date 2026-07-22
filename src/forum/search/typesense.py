@@ -14,8 +14,12 @@ from typesense.types.document import DocumentSchema, SearchParameters
 
 from forum.backends.mysql.models import Comment, CommentThread
 from forum.constants import FORUM_MAX_DEEP_SEARCH_COMMENT_COUNT
-from forum.search.base import (BaseDocumentSearchBackend, BaseIndexSearchBackend, BaseSearchBackend,
-                               BaseThreadSearchBackend)
+from forum.search.base import (
+    BaseDocumentSearchBackend,
+    BaseIndexSearchBackend,
+    BaseSearchBackend,
+    BaseThreadSearchBackend,
+)
 
 _TYPESENSE_CLIENT: Client | None = None
 

@@ -143,6 +143,15 @@ dev = [
 [tool.edx_lint]
 uv_constraints = []
 
+# isort configuration
+# https://pycqa.github.io/isort/docs/configuration/options.html
+[tool.isort]
+include_trailing_comma = true
+indent = "    "
+line_length = 120
+multi_line_output = 3
+skip = ["migrations"]
+
 # Pytest configuration
 # https://docs.pytest.org/en/stable/reference/customize.html
 [tool.pytest.ini_options]

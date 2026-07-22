@@ -16,8 +16,19 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from forum.backends.backend import AbstractBackend
-from forum.backends.mysql.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
-                                         HistoricalAbuseFlagger, LastReadTime, ReadState, Subscription, UserVote)
+from forum.backends.mysql.models import (
+    AbuseFlagger,
+    Comment,
+    CommentThread,
+    CourseStat,
+    EditHistory,
+    ForumUser,
+    HistoricalAbuseFlagger,
+    LastReadTime,
+    ReadState,
+    Subscription,
+    UserVote,
+)
 from forum.constants import RETIRED_BODY, RETIRED_TITLE
 from forum.utils import get_group_ids_from_params
 

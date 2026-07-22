@@ -11,8 +11,17 @@ from django.core.management import call_command
 from django.utils import timezone
 from pymongo.database import Database
 
-from forum.models import (Comment, CommentThread, CourseStat, ForumUser, LastReadTime, MongoContent, ReadState,
-                          Subscription, UserVote)
+from forum.models import (
+    Comment,
+    CommentThread,
+    CourseStat,
+    ForumUser,
+    LastReadTime,
+    MongoContent,
+    ReadState,
+    Subscription,
+    UserVote,
+)
 from forum.utils import get_trunc_title
 
 pytestmark = pytest.mark.django_db

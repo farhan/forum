@@ -9,8 +9,20 @@ from django.utils import timezone
 from pymongo.collection import Collection
 from pymongo.database import Database
 
-from forum.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
-                          HistoricalAbuseFlagger, LastReadTime, MongoContent, ReadState, Subscription, UserVote)
+from forum.models import (
+    AbuseFlagger,
+    Comment,
+    CommentThread,
+    CourseStat,
+    EditHistory,
+    ForumUser,
+    HistoricalAbuseFlagger,
+    LastReadTime,
+    MongoContent,
+    ReadState,
+    Subscription,
+    UserVote,
+)
 from forum.utils import get_trunc_title, make_aware
 
 logger = logging.getLogger(__name__)

@@ -2,8 +2,20 @@
 
 from django.contrib import admin
 
-from forum.models import (AbuseFlagger, Comment, CommentThread, CourseStat, EditHistory, ForumUser,
-                          HistoricalAbuseFlagger, LastReadTime, MongoContent, ReadState, Subscription, UserVote)
+from forum.models import (
+    AbuseFlagger,
+    Comment,
+    CommentThread,
+    CourseStat,
+    EditHistory,
+    ForumUser,
+    HistoricalAbuseFlagger,
+    LastReadTime,
+    MongoContent,
+    ReadState,
+    Subscription,
+    UserVote,
+)
 
 
 @admin.register(ForumUser)
