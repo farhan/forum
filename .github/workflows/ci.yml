@@ -1,43 +1,42 @@
-# This workflow can be troubleshooted with act https://github.com/nektos/act
-# For example: act --job run_tests --matrix toxenv:e2e
-name: Run tests
+name: CI
 
 on:
   push:
     branches: [master]
   pull_request:
-    branches:
-      - "**"
   workflow_dispatch:
-
-defaults:
-  run:
-    shell: bash # opts into error checking
+  # Allow this workflow to be called from other workflows
+  workflow_call:
 
 jobs:
   run_tests:
-    name: tests
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.toxenv }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.12']
-        toxenv: [py, quality, django42, django52, e2e, package]
+        python-version: ["3.12"]
+        toxenv: [py, quality, docs, django42, django52, e2e, package]
 
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-      - name: setup python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
-          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+          python-version: "${{ matrix.python-version }}"
 
-      - name: Install pip
-        run: pip install -r requirements/pip.txt
+      - name: Install CI dependencies
+        run: uv sync --group ci
 
-      - name: Install Dependencies
-        run: pip install -r requirements/ci.txt
+      - name: Run tox
+        run: uv run tox -e ${{ matrix.toxenv }}
 
-      - name: Run Tests
-        env:
-          TOXENV: ${{ matrix.toxenv }}
-        run: tox
+      - name: Upload coverage to Codecov
+        if: matrix.toxenv == 'django52' && matrix.python-version == '3.12'
+        uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: unittests
+          fail_ci_if_error: true
