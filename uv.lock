@@ -4,7 +4,7 @@ requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.15' and extra != 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test'",
     "python_full_version < '3.15' and extra != 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test'",
-    "extra != 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42' and extra != 'group-13-openedx-forum-doc' and extra != 'group-13-openedx-forum-quality' and extra != 'group-13-openedx-forum-test'",
+    "extra != 'group-13-openedx-forum-ci' and extra != 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42' and extra != 'group-13-openedx-forum-doc' and extra != 'group-13-openedx-forum-quality' and extra != 'group-13-openedx-forum-test'",
     "python_full_version >= '3.15' and extra != 'group-13-openedx-forum-django42' and extra != 'group-13-openedx-forum-test'",
     "python_full_version < '3.15' and extra != 'group-13-openedx-forum-django42' and extra != 'group-13-openedx-forum-test'",
 ]
@@ -14,6 +14,9 @@ conflicts = [[
 ], [
     { package = "openedx-forum", group = "django42" },
     { package = "openedx-forum", group = "quality" },
+], [
+    { package = "openedx-forum", group = "ci" },
+    { package = "openedx-forum", group = "django42" },
 ], [
     { package = "openedx-forum", group = "dev" },
     { package = "openedx-forum", group = "django42" },
@@ -76,7 +79,7 @@ version = "4.14.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "idna" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/61/cc/a381afa6efea9f496eff839d4a6a1aed3bfafc7b3ab4b0d1b243a12573dd/anyio-4.14.2.tar.gz", hash = "sha256:cfa139f3ed1a23ee8f88a145ddb5ac7605b8bbfd8592baacd7ce3d8bb4313c7f", size = 260176, upload-time = "2026-07-12T20:29:07.082Z" }
 wheels = [
@@ -219,7 +222,7 @@ name = "build"
 version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "os_name == 'nt' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "colorama", marker = "os_name == 'nt' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "packaging" },
     { name = "pyproject-hooks" },
 ]
@@ -285,7 +288,7 @@ name = "cffi"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "implementation_name != 'PyPy' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/57/5f/ff100cae70ebe9d8df1c01a00e510e45d9adb5c1fdda84791b199141de97/cffi-2.1.0.tar.gz", hash = "sha256:efc1cdd798b1aaf39b4610bba7aad28c9bea9b910f25c784ccf9ec1fa719d1f9", size = 531036, upload-time = "2026-07-06T21:34:30.382Z" }
 wheels = [
@@ -462,7 +465,7 @@ name = "click"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
 wheels = [
@@ -617,7 +620,7 @@ name = "cryptography"
 version = "49.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1f/99/d1c90d6041656cc6ee229dc99cd67fd0cd5aec3c5f7d72fffc27cc750054/cryptography-49.0.0.tar.gz", hash = "sha256:f89660a348f4f78a92366240a61404e337586ef7f5909a2fef59ca88ef505493", size = 854345, upload-time = "2026-06-12T20:02:30.512Z" }
 wheels = [
@@ -702,7 +705,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref", marker = "extra == 'group-13-openedx-forum-django42'" },
     { name = "sqlparse", marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/11/b5/f1a53dc68da6429d6e0345bb848161e2381a2e9f02700148911e8582c2b3/django-4.2.30.tar.gz", hash = "sha256:4ebc7a434e3819db6cf4b399fb5b3f536310a30e8486f08b66886840be84b37c", size = 10468707, upload-time = "2026-04-07T14:05:45.57Z" }
 wheels = [
@@ -718,9 +721,9 @@ resolution-markers = [
     "python_full_version < '3.15'",
 ]
 dependencies = [
-    { name = "asgiref", marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
-    { name = "sqlparse", marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
-    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-13-openedx-forum-dev') or (sys_platform == 'win32' and extra != 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "asgiref" },
+    { name = "sqlparse" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-13-openedx-forum-ci') or (sys_platform == 'win32' and extra == 'group-13-openedx-forum-dev') or (sys_platform == 'win32' and extra != 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/26/889449d521ae508b26de715954faecd8bcf3f740affb81b2d146a83b42a5/django-5.2.16.tar.gz", hash = "sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200", size = 10890894, upload-time = "2026-07-07T13:52:17.005Z" }
 wheels = [
@@ -733,7 +736,7 @@ version = "0.7.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/34/1d/c56588f67130aeef8828e47535e8551337d2ae02f91f1414da61bc5e49fb/django-crum-0.7.9.tar.gz", hash = "sha256:65e9bc0f070a663fafc4d9e357f45fd4e6f01838b20a9e2fb7670f5706754288", size = 5168, upload-time = "2020-11-10T17:15:35.124Z" }
 wheels = [
@@ -774,7 +777,7 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/e1/6f533da0d4ac89f427dfd9410e39bfc14ae3a23335ecd549d76be4b2a834/django_waffle-5.0.0.tar.gz", hash = "sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509", size = 37761, upload-time = "2025-06-12T07:38:54.895Z" }
 wheels = [
@@ -787,7 +790,7 @@ version = "3.17.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ca/d7/c016e69fac19ff8afdc89db9d31d9ae43ae031e4d1993b20aca179b8301a/djangorestframework-3.17.1.tar.gz", hash = "sha256:a6def5f447fe78ff853bff1d47a3c59bf38f5434b031780b351b0c73a62db1a5", size = 905742, upload-time = "2026-03-24T16:58:33.705Z" }
 wheels = [
@@ -861,7 +864,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "psutil" },
@@ -879,7 +882,7 @@ version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
-    { name = "lxml", extra = ["html-clean"], marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "lxml", extra = ["html-clean"], marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "path" },
     { name = "polib" },
     { name = "pyyaml" },
@@ -928,7 +931,7 @@ version = "5.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "edx-toggles" },
     { name = "elasticsearch" },
     { name = "event-tracking" },
@@ -947,7 +950,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "code-annotations" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "edx-django-utils" },
@@ -977,7 +980,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "celery" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "edx-django-utils" },
     { name = "edx-toggles" },
     { name = "openedx-events" },
@@ -995,7 +998,7 @@ name = "faker"
 version = "40.35.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fe/a1/79278f517de8437a51af4cbce9cb86b0085fc22554e7ebffc6cb43bcb957/faker-40.35.0.tar.gz", hash = "sha256:13495348ec6f80d22c8c1654906ffeae336d485fea476544642ea24b120d9e13", size = 2025535, upload-time = "2026-07-22T17:18:42.589Z" }
 wheels = [
@@ -1197,9 +1200,9 @@ dependencies = [
     { name = "jaraco-classes" },
     { name = "jaraco-context" },
     { name = "jaraco-functools" },
-    { name = "jeepney", marker = "sys_platform == 'linux' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
-    { name = "pywin32-ctypes", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
-    { name = "secretstorage", marker = "sys_platform == 'linux' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "jeepney", marker = "sys_platform == 'linux' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "pywin32-ctypes", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "secretstorage", marker = "sys_platform == 'linux' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/43/4b/674af6ef2f97d56f0ab5153bf0bfa28ccb6c3ed4d1babf4305449668807b/keyring-25.7.0.tar.gz", hash = "sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b", size = 63516, upload-time = "2025-11-16T16:26:09.482Z" }
 wheels = [
@@ -1625,7 +1628,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "edx-ccx-keys" },
     { name = "edx-django-utils" },
     { name = "edx-opaque-keys" },
@@ -1643,7 +1646,7 @@ source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-13-openedx-forum-ci' or extra == 'group-13-openedx-forum-dev' or extra != 'group-13-openedx-forum-django42' or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "djangorestframework" },
     { name = "edx-search" },
     { name = "elasticsearch" },
@@ -1657,8 +1660,26 @@ dependencies = [
 [package.dev-dependencies]
 ci = [
     { name = "black" },
+    { name = "build" },
+    { name = "code-annotations" },
+    { name = "coverage" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
+    { name = "djangorestframework-stubs" },
+    { name = "edx-lint" },
+    { name = "faker" },
+    { name = "isort" },
+    { name = "mongomock" },
+    { name = "mypy" },
+    { name = "pycodestyle" },
+    { name = "pydocstyle" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
     { name = "tox" },
     { name = "tox-uv" },
+    { name = "twine" },
+    { name = "types-beautifulsoup4" },
+    { name = "types-requests" },
 ]
 dev = [
     { name = "black" },
@@ -1713,7 +1734,6 @@ doc = [
     { name = "twine" },
 ]
 quality = [
-    { name = "black" },
     { name = "build" },
     { name = "code-annotations" },
     { name = "coverage" },
@@ -1774,8 +1794,26 @@ requires-dist = [
 [package.metadata.requires-dev]
 ci = [
     { name = "black" },
+    { name = "build" },
+    { name = "code-annotations" },
+    { name = "coverage" },
+    { name = "django", specifier = ">=5.2,<6.0" },
+    { name = "djangorestframework-stubs" },
+    { name = "edx-lint" },
+    { name = "faker" },
+    { name = "isort" },
+    { name = "mongomock" },
+    { name = "mypy" },
+    { name = "pycodestyle" },
+    { name = "pydocstyle" },
+    { name = "pytest", specifier = ">=7.0" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
     { name = "tox" },
     { name = "tox-uv" },
+    { name = "twine" },
+    { name = "types-beautifulsoup4" },
+    { name = "types-requests" },
 ]
 dev = [
     { name = "black" },
@@ -1830,7 +1868,6 @@ doc = [
     { name = "twine" },
 ]
 quality = [
-    { name = "black" },
     { name = "build" },
     { name = "code-annotations" },
     { name = "coverage" },
@@ -2226,7 +2263,7 @@ name = "pynacl"
 version = "1.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz", hash = "sha256:018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c", size = 3511692, upload-time = "2026-01-01T17:48:10.851Z" }
 wheels = [
@@ -2282,7 +2319,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2783,7 +2820,7 @@ version = "6.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "id" },
-    { name = "keyring", marker = "(platform_machine != 'ppc64le' and platform_machine != 's390x') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "keyring", marker = "(platform_machine != 'ppc64le' and platform_machine != 's390x') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (platform_machine == 'ppc64le' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (platform_machine == 's390x' and extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
     { name = "packaging" },
     { name = "readme-renderer" },
     { name = "requests" },
@@ -2908,7 +2945,7 @@ name = "tzlocal"
 version = "5.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
+    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-13-openedx-forum-ci' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-dev' and extra == 'group-13-openedx-forum-django42') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-doc') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-quality') or (extra == 'group-13-openedx-forum-django42' and extra == 'group-13-openedx-forum-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/5b/879b2f932adfa7a053c360d50bc896c977fa6426109185f7c12ebdd0cb9d/tzlocal-5.4.4.tar.gz", hash = "sha256:8dbb8660838688a7b6ba4fed31d18dedf842afb4d47ca050d6d891c2c15f3be4", size = 31170, upload-time = "2026-06-29T08:03:40.026Z" }
 wheels = [
