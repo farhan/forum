@@ -42,7 +42,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 format: ## Auto-fix formatting issues
 	black ${SRC_FILES}
 
-upgrade: ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in
+upgrade: ## update uv.lock and regenerate uv constraints in pyproject.toml
 	uv run --with edx-lint edx_lint write_uv_constraints pyproject.toml
 	uv lock --upgrade
 
