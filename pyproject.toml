@@ -88,8 +88,6 @@ conflicts = [
     ],
 ]
 
-# constraint-dependencies is machine-managed by edx-lint — do not edit directly.
-# To regenerate, run: uv run --with edx-lint edx_lint write_uv_constraints pyproject.toml
 constraint-dependencies = [
     "Django<6.0",
     "elasticsearch<7.14.0",
