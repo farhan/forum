@@ -1,7 +1,7 @@
 """Forum Pin/Unpin thread API Views."""
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -35,8 +35,9 @@ class PinThreadAPIView(APIView):
             A response with the updated thread data.
         """
         try:
+            request_data = cast(dict[str, Any], request.data)
             thread_data: dict[str, Any] = pin_thread(
-                request.data.get("user_id", ""), thread_id
+                request_data.get("user_id", ""), thread_id
             )
         except ForumV2RequestError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -64,8 +65,9 @@ class UnpinThreadAPIView(APIView):
             A response with the updated thread data.
         """
         try:
+            request_data = cast(dict[str, Any], request.data)
             thread_data: dict[str, Any] = unpin_thread(
-                request.data.get("user_id", ""), thread_id
+                request_data.get("user_id", ""), thread_id
             )
         except ForumV2RequestError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -292,7 +292,10 @@ class TypesenseIndexBackend(BaseIndexSearchBackend):
             for page_number in paginator.page_range:
                 page = paginator.get_page(page_number)
                 documents = [
-                    document_builder(obj.pk, obj.doc_to_hash())
+                    document_builder(
+                        obj.pk,
+                        cast(CommentThread, obj).doc_to_hash(),
+                    )
                     for obj in page.object_list
                 ]
                 if documents:

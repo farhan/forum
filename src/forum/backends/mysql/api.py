@@ -1208,7 +1208,7 @@ class MySQLBackend(AbstractBackend):
         forum_user = ForumUser.objects.get(user__pk=user_id)
         if params is None:
             params = {}
-        hash_data = {}
+        hash_data: dict[str, Any] = {}
         hash_data["username"] = forum_user.user.username
         hash_data["external_id"] = forum_user.user.pk
         hash_data["id"] = forum_user.user.pk
