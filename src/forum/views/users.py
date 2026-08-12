@@ -1,7 +1,7 @@
 """Subscriptions API Views."""
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from rest_framework import status
 from rest_framework.exceptions import ParseError
@@ -52,7 +52,7 @@ class UserAPIView(APIView):
     def put(self, request: Request, user_id: str) -> Response:
         """Update user data."""
         try:
-            params = request.data
+            params: dict[str, Any] = cast(dict[str, Any], request.data)
             username = params.get("username")
             default_sort_key = params.get("default_sort_key")
             course_id = params.get("course_id")
@@ -79,7 +79,7 @@ class UserCreateAPIView(APIView):
 
     def post(self, request: Request) -> Response:
         """Create user."""
-        params = request.data
+        params: dict[str, Any] = cast(dict[str, Any], request.data)
         for key in params:
             if key not in ["id", "username"]:
                 return Response(
@@ -111,7 +111,7 @@ class UserEditAPIView(APIView):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
         try:
-            params = request.data
+            params: dict[str, Any] = cast(dict[str, Any], request.data)
         except ParseError:
             return error_500_response
         new_username = params.get("new_username")
@@ -136,7 +136,7 @@ class UserRetireAPIView(APIView):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
         try:
-            params = request.data
+            params: dict[str, Any] = cast(dict[str, Any], request.data)
         except ParseError:
             return error_500_response
         retired_username = params.get("retired_username")
@@ -156,7 +156,7 @@ class UserReadAPIView(APIView):
 
     def post(self, request: Request, user_id: str) -> Response:
         """User read."""
-        params = request.data
+        params: dict[str, Any] = cast(dict[str, Any], request.data)
         data = {
             "source_id": params.get("source_id", ""),
             "complete": params.get("complete"),

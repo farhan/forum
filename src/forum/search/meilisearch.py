@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 
 from forum import constants
 from forum.backends.mysql import MODEL_INDICES
+from forum.backends.mysql.models import Comment, CommentThread
 from forum.search import base
 
 FILTERABLE_FIELDS = [
@@ -125,10 +126,10 @@ class MeilisearchIndexBackend(base.BaseIndexSearchBackend, MeilisearchClientMixi
             paginator = Paginator(Model.objects.all(), per_page=batch_size)
             for page_number in paginator.page_range:
                 page = paginator.get_page(page_number)
-                documents = [
-                    create_document(obj.doc_to_hash(), str(obj.id))
-                    for obj in page.object_list
-                ]
+                documents = []
+                for raw_obj in page.object_list:
+                    obj = t.cast(t.Union[CommentThread, Comment], raw_obj)
+                    documents.append(create_document(obj.doc_to_hash(), str(obj.pk)))
                 if documents:
                     meilisearch_index.add_documents(documents)
 

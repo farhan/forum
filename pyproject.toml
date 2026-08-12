@@ -1,0 +1,225 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm>8.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openedx-forum"
+dynamic = ["readme", "version"]
+description = "Open edX forum application"
+requires-python = ">=3.12"
+license = "AGPL-3.0"
+license-files = ["LICENSE.txt"]
+authors = [
+    {name = "Open edX Project", email = "oscm@openedx.org"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+keywords = ["Python", "edx"]
+dependencies = [
+    "Django>=4.2",
+    "beautifulsoup4",
+    "djangorestframework",
+    "openedx-atlas",
+    "requests",
+    "pymongo",
+    "elasticsearch",
+    "edx-search",
+    "typesense",
+    "mysqlclient",
+]
+
+[project.urls]
+Homepage = "https://github.com/openedx/forum"
+Repository = "https://github.com/openedx/forum"
+
+[project.entry-points."lms.djangoapp"]
+forum = "forum.apps:ForumConfig"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst"], content-type = "text/x-rst"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = [
+    "conf/**/*",
+    "static/**/*",
+    "templates/**/*",
+    "translations/**/*",
+]
+
+# Setuptools SCM configuration
+# https://setuptools-scm.readthedocs.io/
+[tool.setuptools_scm]
+version_scheme = "only-version"
+local_scheme = "no-local-version"
+fallback_version = "0.0.0.dev0"
+
+# Semantic Release configuration
+# https://python-semantic-release.readthedocs.io/
+[tool.semantic_release]
+# Use SETUPTOOLS_SCM_PRETEND_VERSION to set version at build time since the
+# build step happens before the repo gets tagged.
+build_command = "uv run --with build SETUPTOOLS_SCM_PRETEND_VERSION=$NEW_VERSION python -m build"
+# Repo is on 0.x: prevent a feat: commit from bumping 0.x.y → 1.0.0
+allow_zero_version = true
+major_on_zero = false
+
+# uv configuration
+# https://docs.astral.sh/uv/reference/settings/
+[tool.uv]
+package = true
+conflicts = [
+    [
+        {group = "test"},
+        {group = "django42"},
+    ],
+]
+
+constraint-dependencies = [
+    "Django<6.0",
+    "elasticsearch<7.14.0",
+]
+
+[dependency-groups]
+# Base test packages, no Django version pinned
+test-base = [
+    "coverage",
+    "pytest-cov",
+    "pytest-django",
+    "pytest>=7.0",
+    "code-annotations",
+    "mongomock",
+    "Faker",
+    "build",
+    "twine",
+]
+# Default test group: current supported Django version
+# Update Django pin here when bumping the default; add a legacy group for older versions
+test = [
+    {include-group = "test-base"},
+    "Django>=5.2,<6.0",
+]
+# Legacy Django 4.2 support
+django42 = [
+    {include-group = "test-base"},
+    "Django>=4.2,<5.0",
+]
+quality = [
+    {include-group = "test"},
+    "edx-lint",
+    "isort",
+    "pycodestyle",
+    "pydocstyle",
+    "mypy",
+    "djangorestframework-stubs",
+    "types-beautifulsoup4",
+    "types-requests",
+]
+doc = [
+    {include-group = "test"},
+    "doc8",
+    "sphinx-book-theme",
+    "Sphinx",
+]
+ci = [
+    {include-group = "quality"},
+    "tox",
+    "tox-uv",
+    "black",
+]
+dev = [
+    {include-group = "quality"},
+    {include-group = "ci"},
+    "diff-cover",
+    "edx-i18n-tools",
+]
+
+[tool.black]
+target-version = ["py312"]
+line-length = 120
+
+[tool.edx_lint]
+uv_constraints = []
+
+# isort configuration
+# https://pycqa.github.io/isort/docs/configuration/options.html
+[tool.isort]
+include_trailing_comma = true
+indent = "    "
+line_length = 120
+multi_line_output = 3
+skip = ["migrations"]
+
+# Pytest configuration
+# https://docs.pytest.org/en/stable/reference/customize.html
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "forum.settings.test"
+addopts = "--cov --cov-report term-missing --cov-report xml"
+norecursedirs = [".*", "docs", "requirements", "site-packages", "e2e"]
+
+# Coverage configuration
+# https://coverage.readthedocs.io/en/latest/config.html
+[tool.coverage.run]
+branch = true
+source_pkgs = ["forum"]
+omit = [
+    "*/forum/settings/test.py",
+    "*/migrations/*",
+    "*admin.py",
+    "*/static/*",
+    "*/templates/*",
+    "tests/e2e/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+show_missing = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+# Mypy configuration
+# https://mypy.readthedocs.io/en/stable/config_file.html
+[tool.mypy]
+python_version = "3.12"
+
+disallow_untyped_defs = true
+strict_optional = true
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+ignore_errors = false
+ignore_missing_imports = false
+implicit_reexport = false
+strict_equality = true
+no_implicit_optional = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unreachable = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+module = "search.*"
+ignore_missing_imports = true

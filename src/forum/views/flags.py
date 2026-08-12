@@ -1,5 +1,7 @@
 """Forum Flag API Views."""
 
+from typing import Any, cast
+
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -31,7 +33,7 @@ class CommentFlagAPIView(APIView):
         Returns:
         Response: A response with the updated comment data.
         """
-        request_data = request.data
+        request_data = cast(dict[str, Any], request.data)
         update_all = str_to_bool(request_data.get("all", False))
         user_id = request_data.get("user_id")
         try:
@@ -64,7 +66,7 @@ class ThreadFlagAPIView(APIView):
         Returns:
         Response: A response with the updated thread data.
         """
-        request_data = request.data
+        request_data = cast(dict[str, Any], request.data)
         update_all = str_to_bool(request_data.get("all", False))
         user_id = request_data.get("user_id")
         try:

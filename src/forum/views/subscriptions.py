@@ -1,6 +1,6 @@
 """Subscriptions API Views."""
 
-from typing import Any
+from typing import Any, cast
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -41,7 +41,7 @@ class SubscriptionAPIView(APIView):
         Raises:
             HTTP_400_BAD_REQUEST: If the user or content does not exist.
         """
-        request_data = request.data
+        request_data = cast(dict[str, Any], request.data)
         try:
             serilized_data = create_subscription(user_id, request_data["source_id"])
         except ForumV2RequestError as e:

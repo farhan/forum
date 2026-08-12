@@ -1,7 +1,7 @@
 """Forum Threads API Views."""
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -87,7 +87,8 @@ class ThreadsAPIView(APIView):
         """
 
         try:
-            serialized_data = update_thread(thread_id, **request.data)
+            request_data = cast(dict[str, Any], request.data)
+            serialized_data = update_thread(thread_id, **request_data)
             return Response(serialized_data, status=status.HTTP_200_OK)
         except ForumV2RequestError as error:
             return Response(
@@ -119,7 +120,7 @@ class CreateThreadAPIView(APIView):
         """
 
         try:
-            params = request.data
+            params: dict[str, Any] = cast(dict[str, Any], request.data)
             if params.get("anonymous"):
                 params["anonymous"] = str_to_bool(params["anonymous"])
             if params.get("anonymous_to_peers"):

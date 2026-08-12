@@ -1,5 +1,7 @@
 """Forum Comments API Views."""
 
+from typing import Any, cast
+
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -66,7 +68,7 @@ class CommentsAPIView(APIView):
             The details of the comment that is created.
         """
         try:
-            request_data = request.data
+            request_data = cast(dict[str, Any], request.data)
             comment = create_child_comment(
                 comment_id,
                 request_data["body"],
@@ -100,7 +102,7 @@ class CommentsAPIView(APIView):
             The details of the comment that is updated.
         """
         try:
-            request_data = request.data
+            request_data = cast(dict[str, Any], request.data)
             if anonymous := request_data.get("anonymous"):
                 anonymous = str_to_bool(anonymous)
             if anonymous_to_peers := request_data.get("anonymous_to_peers"):
@@ -180,7 +182,7 @@ class CreateThreadCommentAPIView(APIView):
             The details of the comment that is created.
         """
         try:
-            request_data = request.data
+            request_data = cast(dict[str, Any], request.data)
             comment = create_parent_comment(
                 thread_id,
                 request_data["body"],
