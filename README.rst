@@ -97,8 +97,8 @@ To try out changes before applying them, use the ``--dry-run`` option. For insta
 
    ./manage.py lms forum_delete_course_from_mongodb all --dry-run
 
-Search Indicies
----------------
+Search Indices
+--------------
 
 Based on your search backend i.e Elasticsearch or Meilisearch, the commands will populate search indexes.
 
